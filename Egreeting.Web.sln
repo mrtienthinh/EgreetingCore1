@@ -3,24 +3,33 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29806.167
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Egreeting.Web", "Egreeting.Web\Egreeting.Web.csproj", "{58C8DD21-7076-40C8-ABF4-E8A88D0F31D7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Egreeting.Web", "Egreeting.Web\Egreeting.Web.csproj", "{58C8DD21-7076-40C8-ABF4-E8A88D0F31D7}"
+	ProjectSection(ProjectDependencies) = postProject
+		{8A075400-288F-46B0-A890-158ED3544419} = {8A075400-288F-46B0-A890-158ED3544419}
+		{989DEB00-9295-4F09-8199-183922CEA99B} = {989DEB00-9295-4F09-8199-183922CEA99B}
+		{7EC00037-DB8D-4E2F-9B4E-282240D000EB} = {7EC00037-DB8D-4E2F-9B4E-282240D000EB}
+		{FB33F64B-0944-480C-A8C4-FD77E7ACD5BE} = {FB33F64B-0944-480C-A8C4-FD77E7ACD5BE}
+		{2ED3D2A0-92A3-48C7-9446-D5CFEB92E6FD} = {2ED3D2A0-92A3-48C7-9446-D5CFEB92E6FD}
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Egreeting.Models", "Egreeting.Models\Egreeting.Models.csproj", "{8A075400-288F-46B0-A890-158ED3544419}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Egreeting.Models", "Egreeting.Models\Egreeting.Models.csproj", "{8A075400-288F-46B0-A890-158ED3544419}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Egreeting.Domain", "Egreeting.Domain\Egreeting.Domain.csproj", "{2ED3D2A0-92A3-48C7-9446-D5CFEB92E6FD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Egreeting.Domain", "Egreeting.Domain\Egreeting.Domain.csproj", "{2ED3D2A0-92A3-48C7-9446-D5CFEB92E6FD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Egreeting.Business", "Egreeting.Business\Egreeting.Business.csproj", "{989DEB00-9295-4F09-8199-183922CEA99B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Egreeting.Business", "Egreeting.Business\Egreeting.Business.csproj", "{989DEB00-9295-4F09-8199-183922CEA99B}"
 	ProjectSection(ProjectDependencies) = postProject
 		{8A075400-288F-46B0-A890-158ED3544419} = {8A075400-288F-46B0-A890-158ED3544419}
 		{FB33F64B-0944-480C-A8C4-FD77E7ACD5BE} = {FB33F64B-0944-480C-A8C4-FD77E7ACD5BE}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Egreeting.Repository", "Egreeting.Repository\Egreeting.Repository.csproj", "{FB33F64B-0944-480C-A8C4-FD77E7ACD5BE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Egreeting.Repository", "Egreeting.Repository\Egreeting.Repository.csproj", "{FB33F64B-0944-480C-A8C4-FD77E7ACD5BE}"
 	ProjectSection(ProjectDependencies) = postProject
 		{8A075400-288F-46B0-A890-158ED3544419} = {8A075400-288F-46B0-A890-158ED3544419}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Egreeting.Utils", "Egreeting.Utils\Egreeting.Utils.csproj", "{7EC00037-DB8D-4E2F-9B4E-282240D000EB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Egreeting.Utils", "Egreeting.Utils\Egreeting.Utils.csproj", "{7EC00037-DB8D-4E2F-9B4E-282240D000EB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Egreeting.Models2", "Egreeting.Models2\Egreeting.Models2.csproj", "{13A905F3-ACED-456D-9E92-01C611BF0DA8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -52,6 +61,10 @@ Global
 		{7EC00037-DB8D-4E2F-9B4E-282240D000EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7EC00037-DB8D-4E2F-9B4E-282240D000EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7EC00037-DB8D-4E2F-9B4E-282240D000EB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{13A905F3-ACED-456D-9E92-01C611BF0DA8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13A905F3-ACED-456D-9E92-01C611BF0DA8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13A905F3-ACED-456D-9E92-01C611BF0DA8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13A905F3-ACED-456D-9E92-01C611BF0DA8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
