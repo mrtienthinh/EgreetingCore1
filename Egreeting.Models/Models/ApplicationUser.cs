@@ -1,0 +1,11 @@
+﻿using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
+using System.Threading.Tasks;
+
+namespace Egreeting.Models.Models
+{
+    public class ApplicationUser : IdentityUser
+    {
+        public virtual EgreetingUser EgreetingUser { get; set; }
+    }
+}
