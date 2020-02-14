@@ -14,11 +14,6 @@ namespace Egreeting.Models.AppContext
 {
     public class EgreetingContext : IdentityDbContext
     {
-        public EgreetingContext(DbContextOptions<EgreetingContext> options)
-            : base(options)
-        {
-        }
-
         public virtual DbSet<Ecard> Ecards { get; set; }
         public virtual DbSet<Category> Categories { get; set; }
         public virtual DbSet<Order> Orders { get; set; }
@@ -60,17 +55,21 @@ namespace Egreeting.Models.AppContext
                 .HasIndex(u => u.EgreetingRoleName)
                 .IsUnique();
         }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            IConfigurationRoot configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile(@Directory.GetCurrentDirectory() + "/../Egreeting.Web/appsettings.json").Build();
+            var builder = new DbContextOptionsBuilder<EgreetingContext>();
+            var connectionString = configuration.GetConnectionString("DefaultConnection");
+            builder.UseNpgsql(connectionString);
+        }
     }
 
     public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<EgreetingContext>
     {
         public EgreetingContext CreateDbContext(string[] args)
         {
-            IConfigurationRoot configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile(@Directory.GetCurrentDirectory() + "/../Egreeting.Web/appsettings.json").Build();
-            var builder = new DbContextOptionsBuilder<EgreetingContext>();
-            var connectionString = configuration.GetConnectionString("DefaultConnection");
-            builder.UseNpgsql(connectionString);
-            return new EgreetingContext(builder.Options);
+            return new EgreetingContext();
         }
     }
 }
