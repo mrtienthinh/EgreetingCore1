@@ -121,5 +121,7 @@
         public static readonly string FrontendScheduleSendersDetails = "~/Views/Frontend/ScheduleSenders/Details.cshtml";
         public static readonly string FrontendScheduleSendersEdit = "~/Views/Frontend/ScheduleSenders/Edit.cshtml";
 
+        public static readonly string FrontendHomeError = "~/Views/Frontend/Home/Error.cshtml";
+
     }
 }

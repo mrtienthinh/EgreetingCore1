@@ -20,6 +20,8 @@
 
 
   <ItemGroup>
+    <ProjectReference Include="..\Egreeting.Business\Egreeting.Business.csproj" />
+    <ProjectReference Include="..\Egreeting.Domain\Egreeting.Domain.csproj" />
     <ProjectReference Include="..\Egreeting.Models\Egreeting.Models.csproj" />
   </ItemGroup>
 
