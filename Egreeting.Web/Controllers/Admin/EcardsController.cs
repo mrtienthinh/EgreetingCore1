@@ -9,6 +9,7 @@ using System.IO;
 using Egreeting.Models.AppContext;
 using Egreeting.Web.Utils;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,6 +17,7 @@ namespace Egreeting.Web.Controllers.Admin
 {
     //[LogAction]
     //[RoleAuthorize(Roles = "Admin")]
+    [Route("admin/[controller]/[action]")]
     public class EcardsController : BaseAdminController
     {
         private IEcardBusiness EcardBusiness;
@@ -133,7 +135,7 @@ namespace Egreeting.Web.Controllers.Admin
                     return View(ViewNamesConstant.AdminEcardsCreate, ecard);
                 }
 
-                using (var context = new EgreetingContext())
+                using (var context = new DesignTimeDbContextFactory().CreateDbContext(null))
                 {
                     var lstCategoryID = ListCategoryString.Split('-').Where(x => x.Length > 0).Select(x => Convert.ToInt32(x)).ToList();
                     var lstCategory = context.Set<Category>().Where(x => lstCategoryID.Contains(x.CategoryID)).Select(x => x.CategoryEcards).ToList();
@@ -185,7 +187,7 @@ namespace Egreeting.Web.Controllers.Admin
         {
             if (ModelState.IsValid)
             {
-                using (var context = new EgreetingContext())
+                using (var context = new DesignTimeDbContextFactory().CreateDbContext(null))
                 {
                     var ecardUpdate = context.Set<Ecard>().Find(ecard.EcardID);
 

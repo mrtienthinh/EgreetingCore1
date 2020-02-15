@@ -1,21 +1,38 @@
-﻿using Egreeting.Models.AppContext;
+﻿using Bogus;
+using Egreeting.Models.AppContext;
 using Egreeting.Models.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Egreeting.Web.Controllers.Admin
 {
+    [Route("admin/[controller]/[action]")]
     public class DummyDataController : BaseController
     {
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<ApplicationRole> _roleManager;
+
+        public DummyDataController(RoleManager<ApplicationRole> roleManager, UserManager<ApplicationUser> userManager)
+        {
+            _userManager = userManager;
+            _roleManager = roleManager;
+        }
+
         // GET: DummyData
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
             var faker = new Faker("en");
-            using (var context = new EgreetingContext())
+
+            // create new category
+            using (var context = new DesignTimeDbContextFactory().CreateDbContext(null))
             {
                 //20 category;
                 var categories = new List<Category>();
@@ -39,10 +56,8 @@ namespace Egreeting.Web.Controllers.Admin
             }
 
             //3 role
-            using (var context = new EgreetingContext())
+            using (var context = new DesignTimeDbContextFactory().CreateDbContext(null))
             {
-                var store = new RoleStore<ApplicationRole>(context);
-                var manager = new RoleManager<ApplicationRole>(store);
                 var role = new ApplicationRole
                 {
                     Name = "Admin",
@@ -53,7 +68,7 @@ namespace Egreeting.Web.Controllers.Admin
                         CreatedDate = faker.Date.Past(),
                     }
                 };
-                manager.Create(role);
+                await _roleManager.CreateAsync(role);
                 role = new ApplicationRole
                 {
                     Name = "User",
@@ -64,7 +79,7 @@ namespace Egreeting.Web.Controllers.Admin
                         CreatedDate = faker.Date.Past(),
                     }
                 };
-                manager.Create(role);
+                await _roleManager.CreateAsync(role);
                 role = new ApplicationRole
                 {
                     Name = "Subcriber",
@@ -75,133 +90,129 @@ namespace Egreeting.Web.Controllers.Admin
                         CreatedDate = faker.Date.Past(),
                     }
                 };
-                manager.Create(role);
+                await _roleManager.CreateAsync(role);
             }
 
             //20 user
-            using (var context = new EgreetingContext())
+            var image = System.IO.File.ReadAllBytes($"{Startup.StaticHostEnvironment.WebRootPath}/Admin/dist/img/avatar.png");
+
+            var user = new ApplicationUser
             {
-                var image = System.IO.File.ReadAllBytes(Server.MapPath("~/Content/Admin/dist/img/avatar.png"));
-                var store = new UserStore<ApplicationUser>(context);
-                var manager = new UserManager<ApplicationUser>(store);
-
-                var user = new ApplicationUser
+                UserName = "mrtienthinh@gmail.com",
+                Email = "mrtienthinh@gmail.com",
+                EgreetingUser = new EgreetingUser
                 {
-                    UserName = "mrtienthinh@gmail.com",
+                    EgreetingUserID = 1,
                     Email = "mrtienthinh@gmail.com",
-                    EgreetingUser = new EgreetingUser
-                    {
-                        EgreetingUserID = 1,
-                        Email = "mrtienthinh@gmail.com",
-                        FirstName = "Tien Thinh",
-                        LastName = "Nguyen",
-                        Avatar = image,
-                        EgreetingUserSlug = generateSlug(),
-                        BirthDay = DateTime.Now,
-                        PaymentDueDate = DateTime.Now,
-                        CreditCardNumber = "123456789012",
-                        CreditCardCVG = "123",
-                        CreatedDate = faker.Date.Past(),
-                    }
-                };
-                manager.Create(user, "123456aA@");
-                manager.AddToRole(user.Id, "Admin");
-
-                user = new ApplicationUser
-                {
-                    UserName = "admin@gmail.com",
-                    Email = "admin@gmail.com",
-                    EgreetingUser = new EgreetingUser
-                    {
-                        EgreetingUserID = 2,
-                        Email = "admin@gmail.com",
-                        FirstName = "Tien Thinh",
-                        LastName = "Nguyen",
-                        Avatar = image,
-                        EgreetingUserSlug = generateSlug(),
-                        BirthDay = DateTime.Now,
-                        PaymentDueDate = DateTime.Now,
-                        CreditCardNumber = "123456789012",
-                        CreditCardCVG = "123",
-                        CreatedDate = faker.Date.Past(),
-                    }
-                };
-                manager.Create(user, "123456aA@");
-                manager.AddToRole(user.Id, "Admin");
-
-                user = new ApplicationUser
-                {
-                    UserName = "user@gmail.com",
-                    Email = "user@gmail.com",
-                    EgreetingUser = new EgreetingUser
-                    {
-                        EgreetingUserID = 3,
-                        Email = "user@gmail.com",
-                        FirstName = "Tien Thinh",
-                        LastName = "Nguyen",
-                        Avatar = image,
-                        EgreetingUserSlug = generateSlug(),
-                        BirthDay = DateTime.Now,
-                        PaymentDueDate = DateTime.Now,
-                        CreditCardNumber = "123456789012",
-                        CreditCardCVG = "123",
-                        CreatedDate = faker.Date.Past(),
-                    }
-                };
-                manager.Create(user, "123456aA@");
-                manager.AddToRole(user.Id, "User");
-
-                user = new ApplicationUser
-                {
-                    UserName = "subcriber@gmail.com",
-                    Email = "subcriber@gmail.com",
-                    EgreetingUser = new EgreetingUser
-                    {
-                        EgreetingUserID = 4,
-                        Email = "subcriber@gmail.com",
-                        FirstName = "Tien Thinh",
-                        LastName = "Nguyen",
-                        Avatar = image,
-                        EgreetingUserSlug = generateSlug(),
-                        BirthDay = DateTime.Now,
-                        PaymentDueDate = DateTime.Now,
-                        CreditCardNumber = "123456789012",
-                        CreditCardCVG = "123",
-                        CreatedDate = faker.Date.Past(),
-                    }
-                };
-                manager.Create(user, "123456aA@");
-                manager.AddToRole(user.Id, "Subcriber");
-
-                for (int i = 5; i <= 20; i++)
-                {
-                    user = new ApplicationUser
-                    {
-                        UserName = "subcriber"+i+"@gmail.com",
-                        Email = "subcriber" + i + "@gmail.com",
-                        EgreetingUser = new EgreetingUser
-                        {
-                            EgreetingUserID = 4,
-                            Email = "subcriber" + i + "@gmail.com",
-                            FirstName = "Tien Thinh "+i,
-                            LastName = "Nguyen",
-                            Avatar = image,
-                            EgreetingUserSlug = generateSlug(),
-                            BirthDay = DateTime.Now,
-                            PaymentDueDate = DateTime.Now,
-                            CreditCardNumber = "123456789012",
-                            CreditCardCVG = "123",
-                            CreatedDate = faker.Date.Past(),
-                        }
-                    };
-                    manager.Create(user, "123456aA@");
-                    manager.AddToRole(user.Id, "Subcriber");
+                    FirstName = "Tien Thinh",
+                    LastName = "Nguyen",
+                    Avatar = image,
+                    EgreetingUserSlug = generateSlug(),
+                    BirthDay = DateTime.Now,
+                    PaymentDueDate = DateTime.Now,
+                    CreditCardNumber = "123456789012",
+                    CreditCardCVG = "123",
+                    CreatedDate = faker.Date.Past(),
                 }
+            };
+            await _userManager.CreateAsync(user, "123456aA@");
+            await _userManager.AddToRoleAsync(user, "Admin");
+
+            user = new ApplicationUser
+            {
+                UserName = "admin@gmail.com",
+                Email = "admin@gmail.com",
+                EgreetingUser = new EgreetingUser
+                {
+                    EgreetingUserID = 2,
+                    Email = "admin@gmail.com",
+                    FirstName = "Tien Thinh",
+                    LastName = "Nguyen",
+                    Avatar = image,
+                    EgreetingUserSlug = generateSlug(),
+                    BirthDay = DateTime.Now,
+                    PaymentDueDate = DateTime.Now,
+                    CreditCardNumber = "123456789012",
+                    CreditCardCVG = "123",
+                    CreatedDate = faker.Date.Past(),
+                }
+            };
+            await _userManager.CreateAsync(user, "123456aA@");
+            await _userManager.AddToRoleAsync(user, "Admin");
+
+            user = new ApplicationUser
+            {
+                UserName = "user@gmail.com",
+                Email = "user@gmail.com",
+                EgreetingUser = new EgreetingUser
+                {
+                    EgreetingUserID = 3,
+                    Email = "user@gmail.com",
+                    FirstName = "Tien Thinh",
+                    LastName = "Nguyen",
+                    Avatar = image,
+                    EgreetingUserSlug = generateSlug(),
+                    BirthDay = DateTime.Now,
+                    PaymentDueDate = DateTime.Now,
+                    CreditCardNumber = "123456789012",
+                    CreditCardCVG = "123",
+                    CreatedDate = faker.Date.Past(),
+                }
+            };
+            await _userManager.CreateAsync(user, "123456aA@");
+            await _userManager.AddToRoleAsync(user, "Admin");
+
+            user = new ApplicationUser
+            {
+                UserName = "subcriber@gmail.com",
+                Email = "subcriber@gmail.com",
+                EgreetingUser = new EgreetingUser
+                {
+                    EgreetingUserID = 4,
+                    Email = "subcriber@gmail.com",
+                    FirstName = "Tien Thinh",
+                    LastName = "Nguyen",
+                    Avatar = image,
+                    EgreetingUserSlug = generateSlug(),
+                    BirthDay = DateTime.Now,
+                    PaymentDueDate = DateTime.Now,
+                    CreditCardNumber = "123456789012",
+                    CreditCardCVG = "123",
+                    CreatedDate = faker.Date.Past(),
+                }
+            };
+            await _userManager.CreateAsync(user, "123456aA@");
+            await _userManager.AddToRoleAsync(user, "Subcriber");
+
+            for (int i = 5; i <= 20; i++)
+            {
+                user = new ApplicationUser
+                {
+                    UserName = "subcriber"+i+"@gmail.com",
+                    Email = "subcriber" + i + "@gmail.com",
+                    EgreetingUser = new EgreetingUser
+                    {
+                        EgreetingUserID = i,
+                        Email = "subcriber" + i + "@gmail.com",
+                        FirstName = "Tien Thinh "+i,
+                        LastName = "Nguyen",
+                        Avatar = image,
+                        EgreetingUserSlug = generateSlug(),
+                        BirthDay = DateTime.Now,
+                        PaymentDueDate = DateTime.Now,
+                        CreditCardNumber = "123456789012",
+                        CreditCardCVG = "123",
+                        CreatedDate = faker.Date.Past(),
+                    }
+                };
+                await _userManager.CreateAsync(user, "123456aA@");
+                await _userManager.AddToRoleAsync(user, "Subcriber");
             }
+            
   
 
             // 100 Ecard
-            using (var context = new EgreetingContext())
+            using (var context = new DesignTimeDbContextFactory().CreateDbContext(null))
             {
                 var ecards = new List<Ecard>();
                 for (int i = 1; i <= 10; i++)
@@ -215,7 +226,7 @@ namespace Egreeting.Web.Controllers.Admin
                         EcardUrl = "Ecard_" + faker.Random.Number(1,10)+".mp4",
                         ThumbnailUrl = "Thumbnail_" + faker.Random.Number(24, 39)+ ".png",
                         Price = faker.Random.Double() * 100,
-                        Categories = context.Set<Category>().Where(x => categoriesID.Contains(x.CategoryID)).ToList(),
+                        CategoryEcards = (ICollection<CategoryEcard>)context.Set<Category>().Where(x => categoriesID.Contains(x.CategoryID)).Select(x => new CategoryEcard { CategoryId = x.CategoryID, EcardId = i }).ToList(),
                         EgreetingUser = context.Set<EgreetingUser>().Where(x => x.EgreetingUserID == 1).FirstOrDefault(),
                         CreatedDate = faker.Date.Past(),
                     };
@@ -233,7 +244,7 @@ namespace Egreeting.Web.Controllers.Admin
                         EcardUrl = "Ecard_" + faker.Random.Number(11, 23) + ".gif",
                         ThumbnailUrl = "Thumbnail_" + faker.Random.Number(24, 39) + ".png",
                         Price = faker.Random.Double() * 100,
-                        Categories = context.Set<Category>().Where(x => categoriesID.Contains(x.CategoryID)).ToList(),
+                        CategoryEcards = (ICollection<CategoryEcard>)context.Set<Category>().Where(x => categoriesID.Contains(x.CategoryID)).Select(x => new CategoryEcard { CategoryId = x.CategoryID, EcardId = i }).ToList(),
                         EgreetingUser = context.Set<EgreetingUser>().Where(x => x.EgreetingUserID == 1).FirstOrDefault(),
                         CreatedDate = faker.Date.Past(),
                     };
@@ -251,7 +262,7 @@ namespace Egreeting.Web.Controllers.Admin
                         EcardUrl = "Ecard_" + faker.Random.Number(24, 39) + ".png",
                         ThumbnailUrl = "Thumbnail_" + faker.Random.Number(24, 39) + ".png",
                         Price = faker.Random.Double() * 100,
-                        Categories = context.Set<Category>().Where(x => categoriesID.Contains(x.CategoryID)).ToList(),
+                        CategoryEcards = (ICollection<CategoryEcard>)context.Set<Category>().Where(x => categoriesID.Contains(x.CategoryID)).Select(x => new CategoryEcard { CategoryId = x.CategoryID, EcardId = i }).ToList(),
                         EgreetingUser = context.Set<EgreetingUser>().Where(x => x.EgreetingUserID == 1).FirstOrDefault(),
                         CreatedDate = faker.Date.Past(),
                     };
@@ -262,7 +273,7 @@ namespace Egreeting.Web.Controllers.Admin
             }
 
             // 500 Feedback
-            using (var context = new EgreetingContext())
+            using (var context = new DesignTimeDbContextFactory().CreateDbContext(null))
             {
                 var feedbacks = new List<Feedback>();
                 for (int i = 1; i <= 500; i++)
@@ -285,7 +296,7 @@ namespace Egreeting.Web.Controllers.Admin
             }
 
             // 16 subcrieber
-            using (var context = new EgreetingContext())
+            using (var context = new DesignTimeDbContextFactory().CreateDbContext(null))
             {
                 var subcribers = new List<Subcriber>();
                 for (int i = 5; i <= 20; i++)
@@ -304,7 +315,7 @@ namespace Egreeting.Web.Controllers.Admin
             }
 
             // 100 Payment
-            using (var context = new EgreetingContext())
+            using (var context = new DesignTimeDbContextFactory().CreateDbContext(null))
             {
                 var payments = new List<Payment>();
                 for (int i = 1; i <= 100; i++)
@@ -326,7 +337,7 @@ namespace Egreeting.Web.Controllers.Admin
             }
 
             //200 Order
-            using (var context = new EgreetingContext())
+            using (var context = new DesignTimeDbContextFactory().CreateDbContext(null))
             {
                 var orders = new List<Order>();
                 for (int i = 1; i <= 200; i++)

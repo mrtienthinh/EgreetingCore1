@@ -1,0 +1,204 @@
+﻿@model Egreeting.Models.Models.EgreetingUser
+@using Egreeting.Models.Models
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewBag.Title = "Create - User";
+}
+
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <h1>
+        User management
+        <small>Create</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="@Url.Action("Index","Home")"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li>Admin</li>
+        <li><a href="@Url.Action("Index")">User</a></li>
+        <li class="active">Edit</li>
+    </ol>
+</section>
+
+<!-- Main content -->
+<section class="content">
+
+    <div class="box box-primary">
+        <div class="box-header">
+            <h3 class="box-title">Edit user</h3>
+        </div><!-- /.box-header -->
+        <form action="@Url.Action("Edit")" method="POST" role="form" enctype="multipart/form-data">
+            <div class="box-body">
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                @Html.AntiForgeryToken()
+                @{
+                    string ListRoleString = "";
+                    if (Model.EgreetingUserRoles != null && Model.EgreetingUserRoles.Count() > 0)
+                    {
+                        ListRoleString = String.Join("-", Model.EgreetingUserRoles.Select(x => x.EgreetingRoleId.ToString()).ToArray());
+                    }
+                }
+                <input type="hidden" name="UserId" id="UserId" value="@ViewBag.UserId" />
+                <input type="hidden" name="ListRole" id="ListRole" value="@ListRoleString" />
+                <div class="form-group">
+                    <label for="select-role">Role</label>
+                    <select id="select-role" class="form-control" onchange="SelectMultiple(this)">
+                        <option value=""></option>
+                        @foreach (var role in ViewBag.ListRole as List<EgreetingRole>)
+                        {
+                            <option value="@role.EgreetingRoleID">@role.EgreetingRoleName</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group" id="ListRoleView">
+                    @if (Model.EgreetingUserRoles != null && Model.EgreetingUserRoles.Count() > 0)
+                    {
+                        foreach (var role in Model.EgreetingUserRoles.Select(x => x.EgreetingRole))
+                        {
+                            <span class="badge badge-primary" style="background-color: blue" onclick="RemoveBadge(this)" value="@role.EgreetingRoleID">@role.EgreetingRoleName</span>
+                        }
+                    }
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.FirstName)
+                    @Html.EditorFor(m => m.FirstName, new { htmlAttributes = new { @class = "form-control", @placeholder = "FirstName", @id = "FirstName", @onblur = "CreateSlug()" } })
+                    @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.LastName)
+                    @Html.EditorFor(m => m.LastName, new { htmlAttributes = new { @class = "form-control", @placeholder = "LastName", @id = "LastName", @onblur = "CreateSlug()" } })
+                    @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.EgreetingUserSlug)
+                    @Html.EditorFor(m => m.EgreetingUserSlug, new { htmlAttributes = new { @class = "form-control", @placeholder = "EgreetingUserSlug", @id = "EgreetingUserSlug" } })
+                    @Html.ValidationMessageFor(model => model.EgreetingUserSlug, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Email)
+                    @Html.EditorFor(m => m.Email, new { htmlAttributes = new { @class = "form-control", @placeholder = "Email", @id = "Email", @disabled = "disabled" } })
+                    @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Password)
+                    @Html.EditorFor(m => m.Password, new { htmlAttributes = new { @class = "form-control", @placeholder = "Password", @id = "Password" } })
+                    @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.ConfirmPassword)
+                    @Html.EditorFor(m => m.ConfirmPassword, new { htmlAttributes = new { @class = "form-control", @placeholder = "Confirm Password", @id = "ConfirmPassword" } })
+                    @Html.ValidationMessageFor(model => model.ConfirmPassword, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.BirthDay)
+                    @Html.EditorFor(m => m.BirthDay, new { htmlAttributes = new { @class = "form-control", @placeholder = "BirthDay", @id = "BirthDay" } })
+                    @Html.ValidationMessageFor(model => model.BirthDay, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.CreditCardNumber)
+                    @Html.EditorFor(m => m.CreditCardNumber, new { htmlAttributes = new { @class = "form-control", @placeholder = "Credit Card Number", @id = "CreditCardNumber" } })
+                    @Html.ValidationMessageFor(model => model.CreditCardNumber, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.CreditCardCVG)
+                    @Html.EditorFor(m => m.CreditCardCVG, new { htmlAttributes = new { @class = "form-control", @placeholder = "Credit Card CVG", @id = "CreditCardCVG" } })
+                    @Html.ValidationMessageFor(model => model.CreditCardCVG, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.PaymentDueDate)
+                    @Html.EditorFor(m => m.PaymentDueDate, new { htmlAttributes = new { @class = "form-control", @placeholder = "Payment Due Date", @id = "PaymentDueDate" } })
+                    @Html.ValidationMessageFor(model => model.PaymentDueDate, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Avatar)
+                    @{
+                        var base64 = Model.Avatar != null ? Convert.ToBase64String(Model.Avatar) : "";
+                        var imgSrc = String.Format("data:image/gif;base64,{0}", base64);
+                    }
+                    <img src="@imgSrc" alt="Avatar" height="200px" width="200px" />
+                    <input type="file" name="Avatar" id="Avatar" class="form-control">
+                    @Html.ValidationMessageFor(model => model.Avatar, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="box-footer">
+                <button type="submit" class="btn btn-primary">Submit</button>
+                <button class="btn btn-primary" type="button" onclick="BackToIndex()">Cancel</button>
+            </div>
+
+        </form>
+    </div>
+
+
+</section><!-- /.content -->
+</div><!-- /.content-wrapper -->
+<!-- Main content -->
+
+@section scripts{
+    <script>
+        function CreateSlug(){
+            var firstName,lastName, slug;
+
+            //Lấy text từ thẻ input title
+            firstName = document.getElementById("FirstName").value;
+            lastName = document.getElementById("LastName").value;
+            fullName = firstName + '-' + lastName;
+
+           //Đổi chữ hoa thành chữ thường
+            slug = fullName.toLowerCase();
+
+            //Đổi ký tự có dấu thành không dấu
+            slug = slug.replace(/á|à|ả|ạ|ã|ă|ắ|ằ|ẳ|ẵ|ặ|â|ấ|ầ|ẩ|ẫ|ậ/gi, 'a');
+            slug = slug.replace(/é|è|ẻ|ẽ|ẹ|ê|ế|ề|ể|ễ|ệ/gi, 'e');
+            slug = slug.replace(/i|í|ì|ỉ|ĩ|ị/gi, 'i');
+            slug = slug.replace(/ó|ò|ỏ|õ|ọ|ô|ố|ồ|ổ|ỗ|ộ|ơ|ớ|ờ|ở|ỡ|ợ/gi, 'o');
+            slug = slug.replace(/ú|ù|ủ|ũ|ụ|ư|ứ|ừ|ử|ữ|ự/gi, 'u');
+            slug = slug.replace(/ý|ỳ|ỷ|ỹ|ỵ/gi, 'y');
+            slug = slug.replace(/đ/gi, 'd');
+            //Xóa các ký tự đặt biệt
+            slug = slug.replace(/\`|\~|\!|\@@|\#|\||\$|\%|\^|\&|\*|\(|\)|\+|\=|\,|\.|\/|\?|\>|\<|\'|\"|\:|\;|_/gi, '');
+            //Đổi khoảng trắng thành ký tự gạch ngang
+            slug = slug.replace(/ /gi, " - ");
+            //Đổi nhiều ký tự gạch ngang liên tiếp thành 1 ký tự gạch ngang
+            //Phòng trường hợp người nhập vào quá nhiều ký tự trắng
+            slug = slug.replace(/\-\-\-\-\-/gi, '-');
+            slug = slug.replace(/\-\-\-\-/gi, '-');
+            slug = slug.replace(/\-\-\-/gi, '-');
+            slug = slug.replace(/\-\-/gi, '-');
+            //Xóa các ký tự gạch ngang ở đầu và cuối
+            slug = '@@' + slug + '@@';
+            slug = slug.replace(/\@@\-|\-\@@|\@@/gi, '');
+            slug = slug.replace(/\s/g, '');
+            //In slug ra textbox có id “slug”
+            document.getElementById('EgreetingUserSlug').value = slug;
+        }
+
+        function SelectMultiple(e)
+        {
+            var ListRoleArray = $('#ListRole').val().split('-').filter(x => x.length > 0);
+            if (!ListRoleArray.includes(e.value)) {
+                ListRoleArray.push(e.value);
+                var htmlresult = $('#select-role').find(":selected").text();
+                var html = `<span class="badge badge-primary" onclick="RemoveBadge(this)" value="`+e.value+`">` + htmlresult + `</span>`;
+                $('#ListRoleView').append(html);
+            };
+            var ListRole = ListRoleArray.join('-');
+            $('#ListRole').val(ListRole);
+        }
+
+        function RemoveBadge(e) {
+            var roleRemove = $(e).attr('value');
+            var ListRoleArray = $('#ListRole').val().split('-').filter(x => x.length > 0);
+            if (ListRoleArray.includes(roleRemove)) {
+                ListRoleArray = ListRoleArray.filter(x => x !== roleRemove);
+            };
+            var ListRole = ListRoleArray.join('-');
+            $('#ListRole').val(ListRole);
+            e.remove();
+        }
+
+        function BackToIndex()
+        {
+            window.location.href = ('@Url.Action("Index")');
+        }
+    </script>
+}

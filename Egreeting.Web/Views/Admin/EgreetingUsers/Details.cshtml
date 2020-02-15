@@ -1,0 +1,122 @@
+﻿@model Egreeting.Models.Models.EgreetingUser
+
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewBag.Title = "Detail - User";
+}
+
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <h1>
+        User management
+        <small>Detail</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="@Url.Action("Index","Home")"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li>Admin</li>
+        <li><a href="@Url.Action("Index")">User</a></li>
+        <li class="active">Edit</li>
+    </ol>
+</section>
+
+<!-- Main content -->
+<section class="content">
+
+    <div class="box box-primary">
+        <div class="box-header">
+            <h3 class="box-title">Edit user</h3>
+        </div><!-- /.box-header -->
+        <form action="@Url.Action("Edit")" method="POST" role="form" enctype="multipart/form-data">
+            <div class="box-body">
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                @Html.AntiForgeryToken()
+                <div class="form-group" id="ListRoleView">
+                    @if (Model.EgreetingUserRoles != null && Model.EgreetingUserRoles.Count() > 0)
+                    {
+                        foreach(var role  in Model.EgreetingUserRoles.Select(x => x.EgreetingRole))
+                        {
+                            <span class="badge badge-primary" style="background-color: blue">@role.EgreetingRoleName</span>
+                        }
+                    }
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.FirstName)
+                    @Html.EditorFor(m => m.FirstName, new { htmlAttributes = new { @class = "form-control", @placeholder = "FirstName", @id = "FirstName", @onblur = "CreateSlug()", @disabled = "disabled" } })
+                    @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.LastName)
+                    @Html.EditorFor(m => m.LastName, new { htmlAttributes = new { @class = "form-control", @placeholder = "LastName", @id = "LastName", @onblur = "CreateSlug()", @disabled = "disabled" } })
+                    @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.EgreetingUserSlug)
+                    @Html.EditorFor(m => m.EgreetingUserSlug, new { htmlAttributes = new { @class = "form-control", @placeholder = "EgreetingUserSlug", @id = "EgreetingUserSlug", @disabled = "disabled" } })
+                    @Html.ValidationMessageFor(model => model.EgreetingUserSlug, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Email)
+                    @Html.EditorFor(m => m.Email, new { htmlAttributes = new { @class = "form-control", @placeholder = "Email", @id = "Email", @disabled = "disabled" } })
+                    @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Password)
+                    @Html.EditorFor(m => m.Password, new { htmlAttributes = new { @class = "form-control", @placeholder = "Password", @id = "Password", @disabled = "disabled" } })
+                    @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.ConfirmPassword)
+                    @Html.EditorFor(m => m.ConfirmPassword, new { htmlAttributes = new { @class = "form-control", @placeholder = "Confirm Password", @id = "ConfirmPassword", @disabled = "disabled" } })
+                    @Html.ValidationMessageFor(model => model.ConfirmPassword, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.BirthDay)
+                    @Html.EditorFor(m => m.BirthDay, new { htmlAttributes = new { @class = "form-control", @placeholder = "BirthDay", @id = "BirthDay", @disabled = "disabled" } })
+                    @Html.ValidationMessageFor(model => model.BirthDay, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.CreditCardNumber)
+                    @Html.EditorFor(m => m.CreditCardNumber, new { htmlAttributes = new { @class = "form-control", @placeholder = "Credit Card Number", @id = "CreditCardNumber", @disabled = "disabled" } })
+                    @Html.ValidationMessageFor(model => model.CreditCardNumber, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.CreditCardCVG)
+                    @Html.EditorFor(m => m.CreditCardCVG, new { htmlAttributes = new { @class = "form-control", @placeholder = "Credit Card CVG", @id = "CreditCardCVG", @disabled = "disabled" } })
+                    @Html.ValidationMessageFor(model => model.CreditCardCVG, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.PaymentDueDate)
+                    @Html.EditorFor(m => m.PaymentDueDate, new { htmlAttributes = new { @class = "form-control", @placeholder = "Payment Due Date", @id = "PaymentDueDate", @disabled = "disabled" } })
+                    @Html.ValidationMessageFor(model => model.PaymentDueDate, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    @{
+                        var base64 = Model.Avatar != null ? Convert.ToBase64String(Model.Avatar) : "";
+                        var imgSrc = String.Format("data:image/gif;base64,{0}", base64);
+                    }
+                    @Html.LabelFor(m => m.Avatar)
+                    <img src="@imgSrc" alt="Avatar" height="200px" width="200px"/>
+                    @Html.ValidationMessageFor(model => model.Avatar, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="box-footer">
+                <button class="btn btn-primary" type="button" onclick="BackToIndex()">Back to index</button>
+            </div>
+
+        </form>
+    </div>
+
+
+</section><!-- /.content -->
+</div><!-- /.content-wrapper -->
+<!-- Main content -->
+
+@section scripts{
+    <script>
+        function BackToIndex()
+        {
+            window.location.href = ('@Url.Action("Index")');
+        }
+    </script>
+}

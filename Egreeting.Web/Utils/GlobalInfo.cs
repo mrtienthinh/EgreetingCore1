@@ -20,32 +20,6 @@ namespace Egreeting.Web.Utils
         {
         }
 
-        public bool IsAdmin
-        {
-            get
-            {
-                return SessionObject.GetBool(GlobalConstant.SESSION_IS_AMIN);
-            }
-            set
-            {
-                SessionObject.SetBool(GlobalConstant.SESSION_IS_AMIN, value);
-            }
-        }
-
-        public string EgreetingUserName
-        {
-            get
-            {
-                return SessionObject.GetString(GlobalConstant.SESSION_EGREETING_USER_NAME);
-            }
-            set
-            {
-                SessionObject.SetString(GlobalConstant.SESSION_EGREETING_USER_NAME, value);
-            }
-        }
-
-
-
 
     }
 }

@@ -13,6 +13,7 @@ namespace Egreeting.Web.Controllers.Admin
 {
     //[LogAction]
     //[RoleAuthorize(Roles = "Admin")]
+    [Route("admin/[controller]/[action]")]
     public class PaymentsController : BaseAdminController
     {
         private IPaymentBusiness PaymentBusiness;
@@ -75,7 +76,7 @@ namespace Egreeting.Web.Controllers.Admin
         {
             if (ModelState.IsValid)
             {
-                using (var context = new EgreetingContext())
+                using (var context = new DesignTimeDbContextFactory().CreateDbContext(null))
                 {
                     var egreetingUser = context.Set<EgreetingUser>().Find(EgreetingUserID);
                     if(egreetingUser == null)
@@ -121,7 +122,7 @@ namespace Egreeting.Web.Controllers.Admin
         {
             if (ModelState.IsValid)
             {
-                using (var context = new EgreetingContext())
+                using (var context = new DesignTimeDbContextFactory().CreateDbContext(null))
                 {
                     var paymentUpdate = context.Set<Payment>().Find(Payment.PaymentID);
                     if (EgreetingUserID != null && paymentUpdate.EgreetingUser.EgreetingUserID != EgreetingUserID)

@@ -1,10 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using System.Security.Claims;
-using System.Threading.Tasks;
+using System;
 
 namespace Egreeting.Models.Models
 {
-    public class ApplicationUser : IdentityUser
+    public class ApplicationUser : IdentityUser<int>
     {
         public virtual EgreetingUser EgreetingUser { get; set; }
     }

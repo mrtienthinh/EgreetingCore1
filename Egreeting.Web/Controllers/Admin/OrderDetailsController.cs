@@ -11,6 +11,7 @@ namespace Egreeting.Web.Controllers.Admin
 {
     //[LogAction]
     //[RoleAuthorize(Roles = "Admin")]
+    [Route("admin/[controller]/[action]")]
     public class OrderDetailsController : BaseAdminController
     {
         private IOrderDetailBusiness OrderDetailBusiness;

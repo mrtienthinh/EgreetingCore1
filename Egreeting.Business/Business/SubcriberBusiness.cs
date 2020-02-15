@@ -16,12 +16,12 @@ namespace Egreeting.Business.Business
     {
         ISubcriberRepository SubcriberRepository;
 
-        public SubcriberBusiness(ILog logger, EgreetingContext context = null)
-          : base(logger)
+        public SubcriberBusiness(EgreetingContext context = null)
+          : base()
         {
             if (context == null)
             {
-                context = new EgreetingContext();
+                context = new DesignTimeDbContextFactory().CreateDbContext(null);
             }
             this.context = context;
 

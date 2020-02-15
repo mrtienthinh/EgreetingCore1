@@ -12,6 +12,7 @@ namespace Egreeting.Web.Controllers.Admin
 {
     //[LogAction]
     //[RoleAuthorize(Roles = "Admin")]
+    [Route("admin/[controller]/[action]")]
     public class CategoriesController : BaseAdminController
     {
         private ICategoryBusiness CategoryBusiness;

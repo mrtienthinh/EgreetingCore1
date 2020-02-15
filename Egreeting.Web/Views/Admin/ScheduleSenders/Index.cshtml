@@ -1,0 +1,262 @@
+﻿@model IEnumerable<Egreeting.Models.Models.ScheduleSender>
+@using Egreeting.Domain
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    int currentPage = (int)ViewBag.currentPage;
+    int pageSize = (int)ViewBag.pageSize;
+    int totalItem = (int)ViewBag.totalItem;
+    int fromItem = (currentPage - 1) * pageSize + 1;
+    int toItem = (currentPage * pageSize) >= totalItem ? totalItem : (currentPage * pageSize);
+    int totalPage = (int)Math.Ceiling((decimal)totalItem / pageSize);
+
+}
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <h1>
+        Schedule send ecard management
+        <small>Index</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Schedule send ecard</li>
+    </ol>
+</section>
+
+<!-- Main content -->
+<section class="content">
+
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-header">
+                    <button class="btn btn-primary" onclick="AddItem()"><i class="fa fa-plus"></i> Add new schedule send ecard</button>
+                </div><!-- /.box-header -->
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <div id="example1_length" class="dataTables_length">
+                                <label>
+                                    <select size="1" name="example1_length"
+                                            aria-controls="example1" id="pageSizeId" onchange="LoadData()">
+                                        @for (int i = 5; i <= 20; i = i + 5)
+                                        {
+                                            if (pageSize == i)
+                                            {
+                                                <option value="@i" selected="selected">@i</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@i">@i</option>
+                                            }
+                                        }
+                                    </select> records per page
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-xs-6">
+                            <div class="dataTables_filter" id="example1_filter">
+                                <label>
+                                    Search: <input type="text" id="searchId"
+                                                   aria-controls="example1" value="@ViewBag.search">
+                                    <input type="hidden" value="@ViewBag.currentPage" id="page">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" onclick="LoadData()"><i class="fa fa-search"></i></button>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    @if (Model.Count() != 0)
+                    {
+                        <table id="example1" class="table table-bScheduleSendered table-striped">
+                            <thead>
+                                <tr>
+                                    <th width="70px">ID<i class="fa fa-fw fa-sort pull-right" style="line-height: 20px; cursor: pointer"></i></th>
+                                    <th>Email<i class="fa fa-fw fa-sort pull-right" style="line-height: 20px; cursor: pointer"></i></th>
+                                    <th>Recipient<i class="fa fa-fw fa-sort pull-right" style="line-height: 20px; cursor: pointer"></i></th>
+                                    <th>Time<i class="fa fa-fw fa-sort pull-right" style="line-height: 20px; cursor: pointer"></i></th>
+                                    <th>Type<i class="fa fa-fw fa-sort pull-right" style="line-height: 20px; cursor: pointer"></i></th>
+                                    <th>Ecard<i class="fa fa-fw fa-sort pull-right" style="line-height: 20px; cursor: pointer"></i></th>
+
+                                    <th width="250px">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbodyId">
+
+                                @{int sttScheduleSender = (currentPage - 1) * pageSize + 1; }
+                                @foreach (var ScheduleSender in Model)
+                                {
+                                    <tr>
+                                        <td>@sttScheduleSender</td>
+                                        <td>@ScheduleSender.EgreetingUser.Email</td>
+                                        <td>@ScheduleSender.RecipientEmail</td>
+                                        <td>@ScheduleSender.ScheduleTime</td>
+                                        @{ 
+                                            var scheduleType = (ScheduleType)ScheduleSender.ScheduleType;
+                                        }
+                                        <td>@scheduleType</td>
+                                        <td><img src="~/Uploads/Thumbnails/@ScheduleSender.Ecard.ThumbnailUrl" alt="Ecard's thumbnail" /></td>
+                                        <td>
+                                            <button type="button" class="btn btn-success" onclick="ShowItem(@ScheduleSender.ScheduleSenderID)"><i class="fa fa-info-circle"></i> Show</button>
+                                            <button type="button" class="btn btn-primary" onclick="EditItem(@ScheduleSender.ScheduleSenderID)"><i class="fa fa-pencil"></i> Edit</button>
+                                            <button type="button" class="btn btn-danger" onclick="DeleteItem(@ScheduleSender.ScheduleSenderID)"><i class="fa fa-trash"></i> Delete</button>
+                                        </td>
+                                    </tr>
+                                    sttScheduleSender = sttScheduleSender + 1;
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <h2>There is no ScheduleSender!</h2>
+                    }
+
+                    <div class="row">
+                        <div class="col-xs-6">
+                            @{
+
+                            }
+                            <div class="dataTables_info" id="example1_info">Showing @fromItem to @toItem of @totalItem entries</div>
+                        </div>
+                        <div class="col-xs-6">
+                            <div class="dataTables_paginate paging_bootstrap">
+                                <ul class="pagination">
+                                    @if (totalPage <= 10)
+                                    {
+                                        if (currentPage == 1)
+                                        {
+                                            <li class="prev disabled"><a>← Previous</a></li>
+                                        }
+                                        else
+                                        {
+                                            <li class="prev" onclick="LoadPage(@currentPage -1)"><a>← Previous</a></li>
+                                        }
+                                        for (int i = 1; i <= totalPage; i++)
+                                        {
+                                            if (currentPage == i)
+                                            {
+                                                <li class="active" onclick="LoadPage(@i)" style="cursor: pointer;"><a>@i</a></li>
+                                            }
+                                            else
+                                            {
+                                                <li onclick="LoadPage(@i)" style="cursor: pointer;"><a>@i</a></li>
+                                            }
+                                        }
+                                        if (currentPage == totalPage)
+                                        {
+                                            <li class="next disabled" style="cursor: pointer;"><a>Next → </a></li>
+                                        }
+                                        else
+                                        {
+                                            <li class="next" onclick="LoadPage(@currentPage +1)" style="cursor: pointer;"><a>Next → </a></li>
+                                        }
+                                    }
+                                    @if (totalPage > 10)
+                                    {
+                                        if (currentPage < 3)
+                                        {
+                                            <li class="prev disabled" style="cursor: pointer;"><a>← First</a></li>
+                                        }
+                                        else
+                                        {
+                                            <li style="cursor: pointer;" class="prev" onclick="LoadPage(1)"><a>← First</a></li>
+                                        }
+                                        if (currentPage >= 4)
+                                        {
+                                            <li><a>...</a></li>
+                                        }
+
+                                        for (int i = currentPage - 2 <= 0 ? 1 : currentPage - 2; i > 0 && i <= currentPage + 2 && i <= totalPage; i++)
+                                        {
+                                            if (currentPage == i)
+                                            {
+                                                <li style="cursor: pointer;" class="active" onclick="LoadPage(@i)"><a>@i</a></li>
+                                            }
+                                            else
+                                            {
+                                                <li style="cursor: pointer;" onclick="LoadPage(@i)"><a>@i</a></li>
+                                            }
+                                        }
+                                        if (currentPage <= totalPage - 3)
+                                        {
+                                            <li><a>...</a></li>
+                                        }
+                                        if (currentPage + 2 <= totalPage)
+                                        {
+                                            <li style="cursor: pointer;" class="next" onclick="LoadPage(@totalPage)"><a>Last → </a></li>
+                                        }
+                                        else
+                                        {
+                                            <li style="cursor: pointer;" class="next disabled"><a>Last → </a></li>
+                                        }
+
+                                    }
+
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- /.box-body -->
+            </div><!-- /.box -->
+        </div><!-- /.col -->
+    </div><!-- /.row -->
+</section><!-- /.content -->
+</div><!-- /.content-wrapper -->
+<!-- Main content -->
+
+
+@section scripts{
+    <script>
+            function DeleteItem(ItemID) {
+                var confirmDelete = confirm('Do you really want to delete this item!');
+                if (confirmDelete) {
+                    var __RequestVerificationToken = $("input[name=__RequestVerificationToken]").val();
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("Delete")',
+                        data: {ItemID, __RequestVerificationToken }, //use id here
+                        success: function () {
+                            LoadData();
+                        },
+                        error: function () {
+                            alert("Error while deleting data");
+                        }
+                    });
+                }
+
+            }
+
+            function ShowItem(id) {
+                window.location.href = ('@Url.Action("Details")'+'/' + id);
+            }
+
+            function AddItem(){
+                window.location.href = ('@Url.Action("Create")');
+            }
+
+            function EditItem(id){
+                window.location.href = ('@Url.Action("Edit")' + '/' + id);
+            }
+
+            function LoadData() {
+                console.log('acb');
+                var search = $('#searchId').val();
+                var pageSize = $('#pageSizeId').val();
+                var page = $('#page').val();
+                console.log(search + '_' + pageSize + '_' + page);
+                window.location.href = ('@Url.Action("Index")'+'?page=' + page + '?page=' + page + '&pageSize=' + pageSize + '&search=' + search);
+            }
+
+
+
+            function LoadPage(e) {
+                console.log(e);
+                var search = $('#searchId').val();
+                var pageSize = $('#pageSizeId').val();
+                console.log(search + '_' + pageSize + '_' + page);
+                window.location.href = ('@Url.Action("Index")'+'?page=' + e + '&pageSize=' + pageSize + '&search=' + search);
+            }
+
+    </script>
+}

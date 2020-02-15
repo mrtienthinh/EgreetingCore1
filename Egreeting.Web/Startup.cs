@@ -13,6 +13,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Egreeting.Models.AppContext;
+using Egreeting.Business.IBusiness;
+using Egreeting.Business.Business;
+using log4net;
+using Microsoft.Extensions.Logging;
+using Egreeting.Models.Models;
 
 namespace Egreeting.Web
 {
@@ -32,13 +37,33 @@ namespace Egreeting.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //services.AddDbContext<ApplicationDbContext>(options =>
-            //    options.UseSqlServer(
-            //        Configuration.GetConnectionString("DefaultConnection")));
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<EgreetingContext>();
+            services.AddDbContext<EgreetingContext>(options =>
+                options.UseNpgsql(
+                    Configuration.GetConnectionString("DefaultConnection")));
+
+            //services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            //    .AddEntityFrameworkStores<EgreetingContext>();
+
+            services.AddScoped<DbContext, EgreetingContext>();
+
+            services.AddIdentity<ApplicationUser, ApplicationRole>()
+                    .AddEntityFrameworkStores<EgreetingContext>()
+                    .AddDefaultUI()
+                    .AddDefaultTokenProviders();
+
             services.AddControllersWithViews();
             services.AddRazorPages();
+
+            services.AddTransient<ICategoryBusiness, CategoryBusiness>();
+            services.AddTransient<IEcardBusiness, EcardBusiness>();
+            services.AddTransient<IEgreetingRoleBusiness, EgreetingRoleBusiness>();
+            services.AddTransient<IEgreetingUserBusiness, EgreetingUserBusiness>();
+            services.AddTransient<IFeedbackBusiness, FeedbackBusiness>();
+            services.AddTransient<IOrderBusiness, OrderBusiness>();
+            services.AddTransient<IOrderDetailBusiness, OrderDetailBusiness>();
+            services.AddTransient<IPaymentBusiness, PaymentBusiness>();
+            services.AddTransient<IScheduleSenderBusiness, ScheduleSenderBusiness>();
+            services.AddTransient<ISubcriberBusiness, SubcriberBusiness>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -57,9 +82,7 @@ namespace Egreeting.Web
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
             app.UseRouting();
-
             app.UseAuthentication();
             app.UseAuthorization();
 

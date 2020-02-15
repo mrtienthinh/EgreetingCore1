@@ -17,14 +17,13 @@ namespace Egreeting.Business.Business
         protected ILog logger;
         public EgreetingContext context;
 
-        public GenericBusiness(ILog logger, EgreetingContext context = null)
+        public GenericBusiness(EgreetingContext context = null)
         {
             if (context == null)
             {
-                context = new EgreetingContext();
+                context = new DesignTimeDbContextFactory().CreateDbContext(null);
             }
             context.ChangeTracker.AutoDetectChangesEnabled = false;
-            this.logger = logger;
         }
 
         public GenericBusiness()

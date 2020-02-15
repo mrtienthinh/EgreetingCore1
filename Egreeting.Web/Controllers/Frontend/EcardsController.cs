@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Egreeting.Web.Controllers.Frontend
 {
     //[LogAction]
-    public class EcardsController : BaseController
+    public class EcardsController : BaseFrontController
     {
         private IEcardBusiness EcardBusiness;
         public EcardsController(IEcardBusiness EcardBusiness)

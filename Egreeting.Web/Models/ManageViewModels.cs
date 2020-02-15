@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNet.Identity;
-using Microsoft.Owin.Security;
+using Microsoft.AspNetCore.Identity;
 
 namespace Egreeting.Web.Models
 {
@@ -17,7 +16,7 @@ namespace Egreeting.Web.Models
     public class ManageLoginsViewModel
     {
         public IList<UserLoginInfo> CurrentLogins { get; set; }
-        public IList<AuthenticationDescription> OtherLogins { get; set; }
+        //public IList<AuthenticationDescription> OtherLogins { get; set; }
     }
 
     public class FactorViewModel
@@ -81,6 +80,6 @@ namespace Egreeting.Web.Models
     public class ConfigureTwoFactorViewModel
     {
         public string SelectedProvider { get; set; }
-        public ICollection<System.Web.Mvc.SelectListItem> Providers { get; set; }
+        //public ICollection<System.Web.Mvc.SelectListItem> Providers { get; set; }
     }
 }

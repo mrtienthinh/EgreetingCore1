@@ -11,15 +11,13 @@ namespace Egreeting.Business.Business
     {
         ICategoryRepository CategoryRepository;
 
-        public CategoryBusiness(ILog logger, EgreetingContext context = null)
-          : base(logger)
+        public CategoryBusiness(EgreetingContext context = null)
+          : base()
         {
 
             if (context == null)
             {
-                //context = new EgreetingContext();
-
-                context = new EgreetingContext();
+                context = new DesignTimeDbContextFactory().CreateDbContext(null);
             }
             this.context = context;
 

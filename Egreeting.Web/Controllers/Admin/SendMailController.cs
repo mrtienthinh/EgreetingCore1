@@ -7,13 +7,14 @@ using System.Threading.Tasks;
 
 namespace Egreeting.Web.Controllers.Admin
 {
-    public class SendMailController : BaseController
+    [Route("admin/[controller]/[action]")]
+    public class SendMailController : BaseAdminController
     {
 
         // GET: SendMail
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> SendByOrder(int? ItemID)
+        public  ActionResult SendByOrder(int? ItemID)
         {
             Utils.Utils.SendMailByOrder(ItemID);
             return Redirect(Request.Headers["UrlReferrer"].ToString());
@@ -21,9 +22,9 @@ namespace Egreeting.Web.Controllers.Admin
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Sendall()
+        public ActionResult Sendall()
         {
-            using (var context = new EgreetingContext())
+            using (var context = new DesignTimeDbContextFactory().CreateDbContext(null))
             {
                 var ListItemID = context.Set<Order>().Where(x => x.ScheduleTime > DateTime.Now && x.Draft != null).Select(x => x.OrderID).ToList();
                 Utils.Utils.SendMailAll(ListItemID);
@@ -33,7 +34,7 @@ namespace Egreeting.Web.Controllers.Admin
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> SendByOrderDetail(int? ItemID)
+        public ActionResult SendByOrderDetail(int? ItemID)
         {
             Utils.Utils.SendMailByOrderDetail(ItemID);
             return Redirect(Request.Headers["UrlReferrer"].ToString());

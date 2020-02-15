@@ -1,0 +1,168 @@
+﻿@model IEnumerable<Egreeting.Models.Models.Payment>
+
+@{
+    Layout = "~/Views/Shared/_FrontendLayout.cshtml";
+    ViewBag.Title = "Payment";
+}
+
+<!-- ================ start banner area ================= -->
+<section class="blog-banner-area" id="category"
+    style="background-image: url('@Url.Content("~/User/img/background.jpg")') !important;
+    position: relative; background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;">
+    <div class="container h-100">
+        <div class="blog-banner">
+            <div class="text-center">
+                <h1>Payment for sending</h1>
+                <nav aria-label="breadcrumb" class="banner-breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="#">Home</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Payment</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- ================ end banner area ================= -->
+<!--================Checkout Area =================-->
+<section class="checkout_area section-margin--small">
+    <div class="container">
+        <div class="returning_customer">
+            <div class="check_title">
+                <h2>Returning Customer? <a href="/account/login">Click here to login</a></h2>
+            </div>
+        </div>
+    </div>
+</section>
+<!--================End Checkout Area =================-->
+<!--================Checkout Area =================-->
+<section class="checkout_area section-margin--small">
+    <div class="container" style="background-color: gainsboro; padding-top: 19px;">
+        <div class="row">
+            <div class="col"></div>
+            <div class="col-xs-12 col-md-6">
+                <div class="panel panel-default">
+                    <div class="panel-heading mb-3 align-self-xl-center" style="text-align: center">
+                        <h3 class="panel-title">
+                            Payment Details
+                        </h3>
+                    </div>
+                    <div class="panel-body">
+                        <form role="form" action="/payments/forsending" method="post">
+                            @Html.ValidationSummary()
+                            @Html.AntiForgeryToken()
+                            <div class="form-group">
+                                <label for="cardNumber">
+                                    Card number
+                                </label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" name="cardNumber" id="cardNumber" placeholder="Valid Card Number"
+                                           required autofocus />
+                                    <span class="input-group-addon"><span class="glyphicon glyphicon-lock"></span></span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-12 col-md-12">
+                                    <div class="form-group">
+                                        <label for="expityMonth">
+                                            Expiry date
+                                        </label>
+                                        <div class="row">
+                                            <div class="col-xs-6 col-lg-6">
+                                                <input type="text" class="form-control" name="expityMonth" id="expityMonth" placeholder="MM" required />
+                                            </div>
+                                            <div class="col-xs-6 col-lg-6">
+                                                <input type="text" class="form-control" name="expityYear" id="expityYear" placeholder="YY" required />
+                                            </div>
+                                        </div>
+                                        <label for="cvCode" class="mt-2">
+                                            CV CODE
+                                        </label>
+                                        <div class="row">
+                                            <div class="col-xs-4 col-lg-4">
+                                                <input type="password" class="form-control" name="CV" id="cvCode" placeholder="CV" required />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="btn btn-success btn-lg btn-block" type="button" onclick="PayForSending()">Pay</button>
+                        </form>
+                    </div>
+                </div>
+                <br />
+            </div>
+            <div class="col"></div>
+        </div>
+    </div>
+</section>
+<!--================End Checkout Area =================-->
+
+@section scripts{
+    <script>
+        function PayForSending() {
+            if (localStorage.getItem('ORDER') === null || localStorage.getItem('LISTECARD') === '') {
+                alert("There is no item in cart");
+                window.location.href = "/";
+            }
+
+            var cardNumber = $('input[name=cardNumber]').val();
+            var expityMonth = $('input[name=expityMonth]').val();
+            var expityYear = $('input[name=expityYear]').val();
+            var CV = $('input[name=CV]').val();
+            var __RequestVerificationToken = $("input[name=__RequestVerificationToken]").val();
+            $.ajax({
+                type: "POST",
+                url: '/payments/forsending',
+                data: {cardNumber, expityMonth, expityYear, CV, __RequestVerificationToken}, //use id here
+                success: function (data) {
+                    if (data === 'success') {
+                        SendOrder();
+                    } else {
+                        alert("Payment transaction fail!");
+                    }
+                },
+                error: function () {
+                    alert("Payment transaction fail!");
+                }
+            });
+        }
+
+        function SendOrder() {
+            if (localStorage.getItem('ORDER') === null || localStorage.getItem('LISTECARD') === '') {
+                alert("There is no item in cart");
+                window.location.href = "/";
+            }
+
+            var order = JSON.parse(localStorage.getItem('ORDER'));
+            var listEcardIDstring = localStorage.getItem('LISTECARD');
+
+            $.ajax({
+                type: "POST",
+                url: '/orders/create',
+                data: {order,listEcardIDstring}, //use id here
+                success: function (data) {
+                    if (data.Code === 'success') {
+                        alert("Payment successful! \n Tracking by order id: "+ data.orderID );
+                        localStorage.setItem("LISTECARD", '');
+                        localStorage.setItem("ORDER", '');
+                        window.location.href = '/';
+                    } else {
+                        alert("Payment transaction fail!");
+                    }
+                },
+                error: function () {
+                    alert("Payment transaction fail!");
+                }
+            });
+        }
+
+
+    </script> 
+    
+
+
+}
+

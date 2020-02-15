@@ -1,0 +1,101 @@
+﻿@model Egreeting.Models.Models.Category
+
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewBag.Title = "Edit - Category";
+}
+
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <h1>
+        Category management
+        <small>Edit</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="@Url.Action("Index","Home")"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li>Admin</li>
+        <li><a href="@Url.Action("Index")">Categories</a></li>
+        <li class="active">Edit</li>
+    </ol>
+</section>
+
+<!-- Main content -->
+<section class="content">
+
+    <div class="box box-primary">
+        <div class="box-header">
+            <h3 class="box-title">Edit category</h3>
+        </div><!-- /.box-header -->
+        <form action="@Url.Action("Edit")" method="POST" role="form">
+            <div class="box-body">
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="CategoryID" value="@Model.CategoryID">
+                <div class="form-group">
+                    <label for="">Category Name</label>
+                    <input type="text" class="form-control" id="categoryName" placeholder="Category name" name="CategoryName" onblur="CreateSlug()" value="@Model.CategoryName">
+                    @Html.ValidationMessageFor(model => model.CategoryName, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    <label for="">Category Slug</label>
+                    <input type="text" class="form-control" id="categorySlug" placeholder="Category slug" name="CategorySlug" value="@Model.CategorySlug">
+                    @Html.ValidationMessageFor(model => model.CategorySlug, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="box-footer">
+                <button type="submit" class="btn btn-primary">Submit</button>
+                <button class="btn btn-primary" type="button" onclick="BackToIndex()">Cancel</button>
+            </div>
+
+        </form>
+    </div>
+
+
+</section><!-- /.content -->
+</div><!-- /.content-wrapper -->
+<!-- Main content -->
+
+@section scripts{
+    <script>
+        function CreateSlug(){
+            var title, slug;
+
+            //Lấy text từ thẻ input title
+            title = document.getElementById("categoryName").value;
+
+           //Đổi chữ hoa thành chữ thường
+            slug = title.toLowerCase();
+
+            //Đổi ký tự có dấu thành không dấu
+            slug = slug.replace(/á|à|ả|ạ|ã|ă|ắ|ằ|ẳ|ẵ|ặ|â|ấ|ầ|ẩ|ẫ|ậ/gi, 'a');
+            slug = slug.replace(/é|è|ẻ|ẽ|ẹ|ê|ế|ề|ể|ễ|ệ/gi, 'e');
+            slug = slug.replace(/i|í|ì|ỉ|ĩ|ị/gi, 'i');
+            slug = slug.replace(/ó|ò|ỏ|õ|ọ|ô|ố|ồ|ổ|ỗ|ộ|ơ|ớ|ờ|ở|ỡ|ợ/gi, 'o');
+            slug = slug.replace(/ú|ù|ủ|ũ|ụ|ư|ứ|ừ|ử|ữ|ự/gi, 'u');
+            slug = slug.replace(/ý|ỳ|ỷ|ỹ|ỵ/gi, 'y');
+            slug = slug.replace(/đ/gi, 'd');
+            //Xóa các ký tự đặt biệt
+            slug = slug.replace(/\`|\~|\!|\@@|\#|\||\$|\%|\^|\&|\*|\(|\)|\+|\=|\,|\.|\/|\?|\>|\<|\'|\"|\:|\;|_/gi, '');
+            //Đổi khoảng trắng thành ký tự gạch ngang
+            slug = slug.replace(/ /gi, " - ");
+            //Đổi nhiều ký tự gạch ngang liên tiếp thành 1 ký tự gạch ngang
+            //Phòng trường hợp người nhập vào quá nhiều ký tự trắng
+            slug = slug.replace(/\-\-\-\-\-/gi, '-');
+            slug = slug.replace(/\-\-\-\-/gi, '-');
+            slug = slug.replace(/\-\-\-/gi, '-');
+            slug = slug.replace(/\-\-/gi, '-');
+            //Xóa các ký tự gạch ngang ở đầu và cuối
+            slug = '@@' + slug + '@@';
+            slug = slug.replace(/\@@\-|\-\@@|\@@/gi, '');
+            slug = slug.replace(/\s/g, '');
+            //In slug ra textbox có id “slug”
+            document.getElementById('categorySlug').value = slug;
+        }
+
+        function BackToIndex()
+        {
+            window.location.href = ('@Url.Action("Index")');
+        }
+    </script>
+}

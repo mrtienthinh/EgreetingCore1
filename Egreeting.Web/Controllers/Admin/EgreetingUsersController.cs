@@ -9,31 +9,24 @@ using Egreeting.Models.AppContext;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using System.Threading.Tasks;
 
 namespace Egreeting.Web.Controllers.Admin
 {
     //[LogAction]
     //[RoleAuthorize(Roles = "Admin")]
+    [Route("admin/[controller]/[action]")]
     public class EgreetingUsersController : BaseAdminController
     {
-        private ApplicationUserManager _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
         private IEgreetingUserBusiness EgreetingUserBusiness;
         private IEgreetingRoleBusiness EgreetingRoleBusiness;
         private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public ApplicationUserManager UserManager
+        public EgreetingUsersController(UserManager<ApplicationUser> userManager, IEgreetingUserBusiness EgreetingUserBusiness, IEgreetingRoleBusiness EgreetingRoleBusiness, IWebHostEnvironment webHostEnvironment)
         {
-            get
-            {
-                return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
-            }
-            private set
-            {
-                _userManager = value;
-            }
-        }
-        public EgreetingUsersController(IEgreetingUserBusiness EgreetingUserBusiness, IEgreetingRoleBusiness EgreetingRoleBusiness, IWebHostEnvironment webHostEnvironment)
-        {
+            _userManager = userManager;
             this.EgreetingUserBusiness = EgreetingUserBusiness;
             this.EgreetingRoleBusiness = EgreetingRoleBusiness;
             _webHostEnvironment = webHostEnvironment;
@@ -45,13 +38,13 @@ namespace Egreeting.Web.Controllers.Admin
             var listModel = new List<ApplicationUser>();
             if (!string.IsNullOrEmpty(search))
             {
-                listModel = UserManager.Users.Where(x => x.EgreetingUser.Draft != true).Where(x => x.Email.Contains(search)).OrderBy(x => x.Id).Skip((page - 1) * pageSize).Take(pageSize).ToList();
-                ViewBag.totalItem = UserManager.Users.Count(x => x.EgreetingUser.Draft != true && x.Email.Contains(search));
+                listModel = _userManager.Users.Where(x => x.EgreetingUser.Draft != true).Where(x => x.Email.Contains(search)).OrderBy(x => x.Id).Skip((page - 1) * pageSize).Take(pageSize).ToList();
+                ViewBag.totalItem = _userManager.Users.Count(x => x.EgreetingUser.Draft != true && x.Email.Contains(search));
             }
             else
             {
-                ViewBag.totalItem = UserManager.Users.Count(x => x.EgreetingUser.Draft != true);
-                listModel = UserManager.Users.Where(x => x.EgreetingUser.Draft != true).OrderBy(x => x.Id).Skip((page - 1) * pageSize).Take(pageSize).ToList();
+                ViewBag.totalItem = _userManager.Users.Count(x => x.EgreetingUser.Draft != true);
+                listModel = _userManager.Users.Where(x => x.EgreetingUser.Draft != true).OrderBy(x => x.Id).Skip((page - 1) * pageSize).Take(pageSize).ToList();
             }
             ViewBag.currentPage = page;
             ViewBag.pageSize = pageSize;
@@ -66,7 +59,7 @@ namespace Egreeting.Web.Controllers.Admin
             {
                 return View(ViewNamesConstant.FrontendHomeError);
             }
-            EgreetingUser egreetingUser = UserManager.FindById(id).EgreetingUser;
+            EgreetingUser egreetingUser = _userManager.Users.Where(x => x.Id.Equals(id)).Select(x => x.EgreetingUser).FirstOrDefault();
             if (egreetingUser == null)
             {
                 return View(ViewNamesConstant.FrontendHomeError);
@@ -87,7 +80,7 @@ namespace Egreeting.Web.Controllers.Admin
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(EgreetingUser egreetingUser, string ListRole)
+        public async Task<ActionResult> Create(EgreetingUser egreetingUser, string ListRole)
         {
             var file = Request.Form.Files["Avatar"];
             byte[] image = new byte[file.Length];
@@ -95,7 +88,7 @@ namespace Egreeting.Web.Controllers.Admin
 
             if (file.Length == 0)
             {
-                image = System.IO.File.ReadAllBytes($"{_webHostEnvironment.WebRootPath}/Content/Admin/dist/img/avatar.png");
+                image = System.IO.File.ReadAllBytes($"{_webHostEnvironment.WebRootPath}/Admin/dist/img/avatar.png");
             }
 
             if (ModelState.IsValid)
@@ -104,10 +97,10 @@ namespace Egreeting.Web.Controllers.Admin
                 egreetingUser.Avatar = image;
                 //egreetingUser.EgreetingRoles = lstEgreetingRole;
                 var applicationUser = new ApplicationUser { Email = egreetingUser.Email, UserName = egreetingUser.Email, EgreetingUser = egreetingUser };
-                var result = UserManager.Create(applicationUser, egreetingUser.Password);
+                var result = await _userManager.CreateAsync(applicationUser, egreetingUser.Password);
                 if (result.Succeeded)
                 {
-                    using (var context = new EgreetingContext())
+                    using (var context = new DesignTimeDbContextFactory().CreateDbContext(null))
                     {
                         var lstRoleId = ListRole.Split('-').Where(x => x.Length > 0).Select(x => Convert.ToInt32(x)).ToList();
                         var eUser = context.Set<EgreetingUser>().Where(x => x.Email.Equals(egreetingUser.Email)).FirstOrDefault();
@@ -131,7 +124,7 @@ namespace Egreeting.Web.Controllers.Admin
             {
                 return View(ViewNamesConstant.FrontendHomeError);
             }
-            EgreetingUser egreetingUser = UserManager.FindById(id).EgreetingUser;
+            EgreetingUser egreetingUser = _userManager.Users.Where(x => x.Id.Equals(id)).Select(x => x.EgreetingUser).FirstOrDefault();
             ViewBag.UserId = id;
             ViewBag.ListRole = EgreetingRoleBusiness.All.Where(x => x.Draft != true).ToList();
             if (egreetingUser == null)
@@ -147,7 +140,7 @@ namespace Egreeting.Web.Controllers.Admin
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(EgreetingUser egreetingUser, string UserId, string ListRole)
+        public async Task<ActionResult> Edit(EgreetingUser egreetingUser, string UserId, string ListRole)
         {
             var file = Request.Form.Files["Avatar"];
             byte[] image = new byte[file.Length];
@@ -155,7 +148,7 @@ namespace Egreeting.Web.Controllers.Admin
 
             if (ModelState.IsValid)
             {
-                var user = UserManager.FindById(UserId);
+                var user = _userManager.Users.Where(x => x.Id.Equals(UserId)).FirstOrDefault();
                 user.EgreetingUser.EgreetingUserSlug = egreetingUser.EgreetingUserSlug;
                 user.EgreetingUser.FirstName = egreetingUser.FirstName;
                 user.EgreetingUser.LastName = egreetingUser.LastName;
@@ -169,15 +162,15 @@ namespace Egreeting.Web.Controllers.Admin
                 }
                 if (!string.IsNullOrEmpty(egreetingUser.Password))
                 {
-                    UserManager.RemovePassword(user.Id);
-                    UserManager.AddPassword(user.Id, egreetingUser.Password);
-                    UserManager.Update(user);
+                    await _userManager.RemovePasswordAsync(user);
+                    await _userManager.AddPasswordAsync(user, egreetingUser.Password);
+                    await _userManager.UpdateAsync(user);
                 }
                 else
                 {
-                    UserManager.Update(user);
+                    await _userManager.UpdateAsync(user);
                 }
-                using (var context = new EgreetingContext())
+                using (var context = new DesignTimeDbContextFactory().CreateDbContext(null))
                 {
                     var lstRoleId = ListRole.Split('-').Where(x => x.Length > 0).Select(x => Convert.ToInt32(x)).ToList();
                     var eUser = context.Set<EgreetingUser>().Where(x => x.Email.Equals(user.Email)).FirstOrDefault();
@@ -194,24 +187,23 @@ namespace Egreeting.Web.Controllers.Admin
 
         // POST: EgreetingUsers/Delete/5
         [HttpPost]
-        public ActionResult Delete(string ItemID)
+        public async Task<ActionResult> Delete(string ItemID)
         {
             if (string.IsNullOrEmpty(ItemID))
             {
                 return View(ViewNamesConstant.FrontendHomeError);
             }
-            var user = UserManager.FindById(ItemID);
+            var user = _userManager.Users.Where(x => x.Id.Equals(ItemID)).FirstOrDefault();
             
             if (user == null)
             {
                 return View(ViewNamesConstant.FrontendHomeError);
             }
             user.EgreetingUser.Draft = true;
-            UserManager.RemovePassword(user.Id);
-            string password = UserManager.PasswordHasher.HashPassword("delete123456Aa@");
-            UserManager.AddPassword(user.Id, password);
-            UserManager.Update(user);
-            var resultUpdate = UserManager.Update(user);
+            await _userManager.RemovePasswordAsync(user);
+            await _userManager.AddPasswordAsync(user, "delete123456Aa@");
+            await _userManager.UpdateAsync(user);
+            var resultUpdate = await _userManager.UpdateAsync(user);
             if (resultUpdate.Succeeded)
             {
                 return RedirectToAction("Index");

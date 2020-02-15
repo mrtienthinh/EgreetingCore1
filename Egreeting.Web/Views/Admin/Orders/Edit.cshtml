@@ -1,0 +1,145 @@
+﻿@model Egreeting.Models.Models.Order
+@using Egreeting.Domain
+@using Egreeting.Models.Models
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewBag.Title = "Create - Order";
+}
+
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <h1>
+        Order management
+        <small>Edit</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="@Url.Action("Index","Home")"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li>Admin</li>
+        <li><a href="@Url.Action("Index")">Orders</a></li>
+        <li class="active">Edit</li>
+    </ol>
+</section>
+
+<!-- Main content -->
+<section class="content">
+
+    <div class="box box-primary">
+        <div class="box-header">
+            <h3 class="box-title">Edit Order</h3>
+        </div><!-- /.box-header -->
+        <form action="@Url.Action("Edit")" method="POST" role="form" enctype="multipart/form-data">
+            <div class="box-body">
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(m => m.OrderID)
+                @{
+                    string ListEcardString = "";
+                    if (Model.OrderDetails != null && Model.OrderDetails.Count() > 0)
+                    {
+                        ListEcardString = String.Join("-", Model.OrderDetails.Where(x => x.Draft != true).Select(x => x.Ecard.EcardID.ToString()).ToArray());
+                    }
+                }
+                <input type="hidden" name="ListEcardString" id="ListEcardString" value="@ListEcardString" />
+                <div class="form-group">
+                    <label for="select-items">Ecard</label>
+                    <select id="select-items" class="form-control" onchange="SelectMultiple(this)">
+                        <option value=""></option>
+                        @foreach (var ecard in ViewBag.Ecards as List<Ecard>)
+                        {
+                            <option value="@ecard.EcardID">@ecard.EcardName</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group" id="ListEcardBadge">
+                    @if (Model.OrderDetails != null && Model.OrderDetails.Count() > 0)
+                    {
+                        foreach (var orderDetail in Model.OrderDetails.Where(x => x.Draft != true))
+                        {
+                            <span class="badge badge-primary" style="background-color: blue" onclick="RemoveBadge(this)" value="@orderDetail.Ecard.EcardID">@orderDetail.Ecard.EcardName</span>
+                        }
+                    }
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.SenderName)
+                    @Html.EditorFor(m => m.SenderName, new { htmlAttributes = new { @class = "form-control", @placeholder = "SenderName", @id = "SenderName", @onblur = "CreateSlug()" } })
+                    @Html.ValidationMessageFor(model => model.SenderName, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.RecipientEmail)
+                    @Html.EditorFor(m => m.RecipientEmail, new { htmlAttributes = new { @class = "form-control", @placeholder = "RecipientEmail", @id = "RecipientEmail" } })
+                    @Html.ValidationMessageFor(model => model.RecipientEmail, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.SendSubject)
+                    @Html.EditorFor(m => m.SendSubject, new { htmlAttributes = new { @class = "form-control", @placeholder = "SendSubject", @id = "SendSubject" } })
+                    @Html.ValidationMessageFor(model => model.SendSubject, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.SendMessage)
+                    @Html.EditorFor(m => m.SendMessage, new { htmlAttributes = new { @class = "form-control", @placeholder = "SendMessage", @id = "SendMessage" } })
+                    @Html.ValidationMessageFor(model => model.SendMessage, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.SendStatus)
+                    @Html.CheckBoxFor(m => m.SendStatus, new { htmlAttributes = new { @class = "form-control", @placeholder = "SendStatus", @id = "SendStatus" } })
+                    @Html.ValidationMessageFor(model => model.SendMessage, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.ScheduleTime)
+                    <input type="datetime" name="ScheduleTime" class="form-control" value="@Model.ScheduleTime.Value.ToString("MM/dd/yyyy H:mm")" id="ScheduleTime" />
+                    @Html.ValidationMessageFor(model => model.ScheduleTime, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="box-footer">
+                <button type="submit" class="btn btn-primary">Submit</button>
+                <button class="btn btn-primary" type="button" onclick="BackToIndex()">Cancel</button>
+            </div>
+
+        </form>
+    </div>
+
+
+</section><!-- /.content -->
+</div><!-- /.content-wrapper -->
+<!-- Main content -->
+
+@section scripts{
+    <script>
+        function SelectMultiple(e)
+        {
+            var ListRoleArray = $('#ListEcardString').val().split('-').filter(x => x.length > 0);
+            if (!ListRoleArray.includes(e.value)) {
+                ListRoleArray.push(e.value);
+                var htmlresult = $('#select-items').find(":selected").text();
+                var html = `<span class="badge badge-primary" style="background-color: blue" onclick="RemoveBadge(this)" value="`+e.value+`">` + htmlresult + `</span>`;
+                $('#ListEcardBadge').append(html);
+            };
+            var ListRole = ListRoleArray.join('-');
+            $('#ListEcardString').val(ListRole);
+        }
+
+        function RemoveBadge(e) {
+            var roleRemove = $(e).attr('value');
+            var ListRoleArray = $('#ListEcardString').val().split('-').filter(x => x.length > 0);
+            if (ListRoleArray.includes(roleRemove)) {
+                ListRoleArray = ListRoleArray.filter(x => x !== roleRemove);
+            };
+            var ListRole = ListRoleArray.join('-');
+            $('#ListEcardString').val(ListRole);
+            e.remove();
+        }
+
+        function BackToIndex()
+        {
+            window.location.href = ('@Url.Action("Index")');
+        }
+
+        $(function () {
+            $("#ScheduleTime").datetimepicker({
+                defaultDate: "11/1/2013",
+                format: 'dd/mm/yyyy HH:mm',
+            });
+         });
+    </script>
+}

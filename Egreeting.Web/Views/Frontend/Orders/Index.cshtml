@@ -1,0 +1,233 @@
+﻿@model IEnumerable<Egreeting.Models.Models.Ecard>
+@using Egreeting.Models.Models
+
+@{
+    Layout = "~/Views/Shared/_FrontendLayout.cshtml";
+    ViewBag.Title = "Order - Egreeting";
+    Order orderDisplay = new Order()
+    {
+        ScheduleTime = DateTime.Now
+    };
+    var i = 1;
+    var totalPrice = string.Format("${0:N2}", Model.Sum(x => x.Price));
+}
+
+<!-- ================ start banner area ================= -->
+<section class="blog-banner-area" id="category"
+    style="background-image: url('@Url.Content("~/User/img/background.jpg")') !important;
+    position: relative; background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;">
+    <div class="container h-100">
+        <div class="blog-banner">
+            <div class="text-center">
+                <h1>Egreeting Cart</h1>
+                <nav aria-label="breadcrumb" class="banner-breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="#">Home</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Cart</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- ================ end banner area ================= -->
+<!--================Cart Area =================-->
+<section class="cart_area">
+    <div class="container">
+        <div class="cart_inner">
+            <div class="">
+                <form action="/orders/checkout" method="post" id="form-order">
+                    @Html.ValidationSummary()
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="listEcardIDstring" value="@ViewBag.listEcardIDstring" />
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col" width="200px">No</th>
+                                <th scope="col">Ecard</th>
+                                <th scope="col">Price</th>
+                                <th scope="col" style="text-align: center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr value="@item.EcardID">
+                                    <td>
+                                        @i
+                                    </td>
+                                    <td>
+                                        <div class="media">
+                                            <div class="d-flex">
+                                                <img src="~/Uploads/Thumbnails/@item.ThumbnailUrl" alt="" width="200px">
+                                            </div>
+                                        </div>
+                                    </td>
+                                    @{
+                                        var price = string.Format("${0:N2}", item.Price);
+                                    }
+                                    <td>
+                                        <h5>@price</h5>
+                                    </td>
+                                    <td style="text-align: center">
+                                        <button type="button" class="btn btn-default" onclick="RemoveFromCart('@item.EcardID')"><i class="fa fa-trash" aria-hidden="true"></i>Delete</button>
+                                    </td>
+                                </tr>
+                                i = i + 1;
+                            }
+
+                            <tr class="bottom_button">
+                                <td>
+                                </td>
+                                <td colspan="3" style="text-align: right">
+                                    <a class="button" href="/">Choice more</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="3">
+                                    <h5>Subtotal</h5>
+                                </td>
+                                <td style="text-align: center">
+                                    <h5>@totalPrice</h5>
+                                </td>
+                            </tr>
+                            <tr class="shipping_area">
+                                <td>
+                                    <h5>@Html.Label("Sender's name")</h5>
+                                </td>
+                                <td colspan="3">
+                                    <input type="text" name="SenderName" value="" class="form-control" placeholder="Sender's name" id="SenderName" />
+                                    @Html.ValidationMessageFor(model => orderDisplay.SenderName, "", new { @class = "text-danger" })
+                                </td>
+                            </tr>
+                            <tr class="shipping_area">
+                                <td>
+                                    <h5>@Html.Label("Recipient's email")</h5>
+                                </td>
+                                <td colspan="3">
+                                    <input type="email" name="RecipientEmail" value="" class="form-control" placeholder="Recipient's email" id="RecipientEmail"/>
+                                    @Html.ValidationMessage("RecipientEmail", new { @class = "text-danger" })
+                                </td>
+                            </tr>
+                            <tr class="shipping_area">
+                                <td>
+                                    <h5>@Html.Label("Subject")</h5>
+                                </td>
+                                <td colspan="3">
+                                    <input type="email" name="SendSubject" value="" class="form-control" placeholder="Subject" id="SendSubject" />
+                                    @Html.ValidationMessage("SendSubject", new { @class = "text-danger" })
+                                </td>
+                            </tr>
+                            <tr class="shipping_area">
+                                <td>
+                                    <h5>@Html.Label("Message")</h5>
+                                </td>
+                                <td colspan="3">
+                                    <input type="email" name="SendMessage" value="" class="form-control" placeholder="SendMessage" id="SendMessage" />
+                                    @Html.ValidationMessage("SendMessage", new { @class = "text-danger" })
+                                </td>
+                            </tr>
+                            <tr class="shipping_area">
+                                <td>
+                                    <h5>@Html.Label("Schedule time")</h5>
+                                </td>
+                                <td colspan="3">
+                                    <input type="datetime" name="ScheduleTime" class="form-control" value="@orderDisplay.ScheduleTime.Value.ToString("MM/dd/yyyy H:mm")" id="ScheduleTime" />
+                                    @Html.ValidationMessage("ScheduleTime",new { @class = "text-danger" })
+                                </td>
+                            </tr>
+                            <tr class="out_button_area">
+                                <td class="d-none-l">
+                                </td>
+                                <td class="">
+                                </td>
+                                <td>
+                                    <div class="checkout_btn_inner d-flex align-items-center">
+                                        <a class="gray_btn" href="/categories/">Continue choice ecard</a>
+                                        <a class="primary-btn ml-2" href="javascript:ToPayment()">Proceed to checkout</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+<!--================End Cart Area =================-->
+
+@section scripts{
+    <script>
+        $(function () {
+            $("#ScheduleTime").datetimepicker({
+                format: 'dd/mm/yyyy HH:mm',
+            });
+        });
+
+        function RemoveFromCart(id) {
+            if (localStorage.getItem('LISTECARD') !== null) {
+                listEcard = localStorage.getItem('LISTECARD');
+                if (listEcard.split('-').includes(id)) {
+                    listEcard = listEcard.split('-').filter(x => x !== id).join('-');
+                    localStorage.setItem('LISTECARD', listEcard);
+                    $('tr').each(function (index, element) {
+                        if ($(element).attr('value') === id) {
+                            $(element).remove();
+                        }
+                    });
+                    ToOrder();
+                }
+            }
+        }
+
+        function ToPayment() {
+            var order = {
+                SenderName: $('#SenderName').val(),
+                RecipientEmail: $('#RecipientEmail').val(),
+                SendSubject: $('#SendSubject').val(),
+                SendMessage: $('#SendMessage').val(),
+                ScheduleTime: $('#ScheduleTime').val(),
+            };
+
+            if (order.RecipientEmail === '') {
+                alert("Recipient's email must not be null or empty!");
+                $('#RecipientEmail').css('border-color', 'red');
+                return;
+            }
+
+            var listEcardIDstring = localStorage.getItem('LISTECARD');
+            var __RequestVerificationToken = $("input[name=__RequestVerificationToken]").val();
+
+            $.ajax({
+                type: "POST",
+                url: '/orders/checkout',
+                data: {order,listEcardIDstring,__RequestVerificationToken}, //use id here
+                success: function (data) {
+                    if (data.Code === 'success') {
+                        alert("Payment successful! \n Tracking by order id: " + data.orderID);
+                        localStorage.setItem("LISTECARD", '');
+                        localStorage.setItem("ORDER", '');
+                        window.location.href = '/';
+                    } else if (data.Code === 'fail') {
+                        alert("Payment transaction not valid!");
+                    } else if (data.Code === 'subcriber') {
+                        alert("You need to payment for subcriber!");
+                        localStorage.setItem("ORDER", order);
+                        window.location.href = "/payments/subcriber";
+                    } else if (data.Code === 'forsending') {
+                        localStorage.setItem("ORDER", JSON.stringify(order));
+                        window.location.href = "/payments";
+                    }
+                },
+                error: function () {
+                    alert("Can't send transaction!");
+                }
+            });
+        }
+
+
+    </script>
+}

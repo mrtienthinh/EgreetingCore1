@@ -1,0 +1,262 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using Egreeting.Models.Models
+@using Egreeting.Models.AppContext
+@{
+    var context = new DesignTimeDbContextFactory().CreateDbContext(null);
+    var user = new ApplicationUser();
+    if (User.Identity.IsAuthenticated)
+    {
+        var userName = User.Identity.Name ?? "";
+        user = context.Set<ApplicationUser>().Where(x => x.UserName.Equals(userName)).FirstOrDefault();
+        
+    }
+    var categories = context.Set<Category>().Where(x => x.Draft != true).OrderBy(x => x.CategoryID).Select(x => new { x.CategoryName, x.CategorySlug, x.CategoryEcards.Count }).Take(5).ToList();
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>@ViewBag.Title</title>
+    <link rel="icon" href="~/User/img/Fevicon.png" type="image/png">
+    <link rel="stylesheet" href="~/User/vendors/bootstrap/bootstrap.min.css">
+    <link rel="stylesheet" href="~/User/vendors/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="~/User/vendors/themify-icons/themify-icons.css">
+    <link rel="stylesheet" href="~/User/vendors/linericon/style.css">
+    <link rel="stylesheet" href="~/User/vendors/owl-carousel/owl.theme.default.min.css">
+    <link rel="stylesheet" href="~/User/vendors/owl-carousel/owl.carousel.min.css">
+    <link rel="stylesheet" href="~/User/vendors/nice-select/nice-select.css">
+    <link rel="stylesheet" href="~/User/vendors/nouislider/nouislider.min.css">
+    <link rel="stylesheet" href="~/User/vendors/linericon/style.css">
+    <link rel="stylesheet" href="~/User/vendors/nouislider/nouislider.min.css">
+    <link href="~/Content/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css" />
+
+    <link rel="stylesheet" href="~/User/css/style.css">
+    @RenderSection("styles", required: false)
+</head>
+<body>
+    @Html.AntiForgeryToken()
+    <!--================ Start Header Menu Area =================-->
+    <header class="header_area">
+        <div class="main_menu">
+            <nav class="navbar navbar-expand-lg navbar-light">
+                <div class="container">
+                    <a class="navbar-brand logo_h" href="/"><h2>Egreeting</h2></a>
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <div class="collapse navbar-collapse offset" id="navbarSupportedContent">
+                        <ul class="nav navbar-nav menu_nav ml-auto mr-auto">
+                            <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+                            <li class="nav-item submenu dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                                   aria-expanded="false">Category</a>
+                                <ul class="dropdown-menu">
+                                    @foreach (var category in categories)
+                                    {
+                                        <li class="nav-item"><a class="nav-link" href="/categories/@category.CategorySlug">@category.CategoryName</a></li>
+                                    }
+                                </ul>
+                            </li>
+                            <li class="nav-item submenu dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                                   aria-expanded="false">Pages</a>
+                                <ul class="dropdown-menu">
+                                    @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "hidden" }))
+                                    {
+                                        @Html.AntiForgeryToken()
+                                    }
+                                    @if (!User.Identity.IsAuthenticated)
+                                    {
+                                        <li class="nav-item"><a class="nav-link" href="/account/login">Login</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="/account/register">Register</a></li>
+                                    }
+                                    else if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                                    {
+                                        <li class="nav-item"><a class="nav-link" href="/admin/egreetingusers">Admin</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="javascript:document.getElementById('logoutForm').submit()">Sign out</a></li>
+                                    }
+                                    else
+                                    {
+                                        <li class="nav-item"><a class="nav-link" href="javascript:document.getElementById('logoutForm').submit()">Sign out</a></li>
+                                    }
+                                    <li class="nav-item"><a class="nav-link" href="/payments/">Payments</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="/payments/subcriber">Payments month</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="/tracking/">Tracking</a></li>
+                                </ul>
+                            </li>
+                            <li class="nav-item"><a class="nav-link" href="/Subcribers">Subcribers</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/Feedbacks">Feedback</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/Home/Contact">Contact</a></li>
+                        </ul>
+
+                        <ul class="nav-shop">
+                            <li class="nav-item"><button><i class="ti-search"></i></button></li>
+                            <li class="nav-item"><button><i class="ti-shopping-cart" onclick="ToOrder()"></i><span class="nav-shop__circle">0</span></button> </li>
+                            @if (!User.Identity.IsAuthenticated)
+                            {
+                                <li class="nav-item"><button><a href="/Account/Login"><i class="ti-user"></i></a> </button> </li>
+                            }
+                            else
+                            {
+                                <li class="nav-item"><button><a href="/admin/ecards"><i class="ti-user" style="color: blue"></i></a> </button> </li>
+                            }
+                            <li class="nav-item"><a class="button button-header" href="/orders/">Buy Now</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+    <!--================ Start render  =================-->
+    @RenderBody()
+    <!--================ End render  =================-->
+    <!--================ Start footer Area  =================-->
+    <footer>
+        <div class="footer-area">
+            <div class="container">
+                <div class="row section_gap">
+                    <div class="col-lg-3 col-md-6 col-sm-6">
+                        <div class="single-footer-widget tp_widgets">
+                            <h4 class="footer_title large_title">Our Mission</h4>
+                            <p>
+                                So seed seed green that winged cattle in. Gathering thing made fly you're no
+                                divided deep moved us lan Gathering thing us land years living.
+                            </p>
+                            <p>
+                                So seed seed green that winged cattle in. Gathering thing made fly you're no divided deep moved
+                            </p>
+                        </div>
+                    </div>
+                    <div class="offset-lg-1 col-lg-2 col-md-6 col-sm-6">
+                        <div class="single-footer-widget tp_widgets">
+                            <h4 class="footer_title">Quick Links</h4>
+                            <ul class="list">
+                                <li><a href="/Home/Index">Home</a></li>
+                                @foreach (var category in categories)
+                                {
+                                    <li><a href="/Categories/@category.CategorySlug">@category.CategoryName</a></li>
+                                }
+                                <li><a href="/Home/About">About</a></li>
+                                <li><a href="/Home/Contact">Contact</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-6 col-sm-6">
+                        <div class="single-footer-widget instafeed">
+                            <h4 class="footer_title">Gallery</h4>
+                            <ul class="list instafeed d-flex flex-wrap">
+                                <li><img src="~/Uploads/Thumbnails/Thumbnail_24.png" alt="" width="70px"></li>
+                                <li><img src="~/Uploads/Thumbnails/Thumbnail_25.png" alt="" width="70px"></li>
+                                <li><img src="~/Uploads/Thumbnails/Thumbnail_26.png" alt="" width="70px"></li>
+                                <li><img src="~/Uploads/Thumbnails/Thumbnail_27.png" alt="" width="70px"></li>
+                                <li><img src="~/Uploads/Thumbnails/Thumbnail_28.png" alt="" width="70px"></li>
+                                <li><img src="~/Uploads/Thumbnails/Thumbnail_29.png" alt="" width="70px"></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="offset-lg-1 col-lg-3 col-md-6 col-sm-6">
+                        <div class="single-footer-widget tp_widgets">
+                            <h4 class="footer_title">Contact Us</h4>
+                            <div class="ml-40">
+                                <p class="sm-head">
+                                    <span class="fa fa-location-arrow"></span>
+                                    Head Office
+                                </p>
+                                <p>123, Main Street, Your City</p>
+
+                                <p class="sm-head">
+                                    <span class="fa fa-phone"></span>
+                                    Phone Number
+                                </p>
+                                <p>
+                                    +123 456 7890 <br>
+                                    +123 456 7890
+                                </p>
+
+                                <p class="sm-head">
+                                    <span class="fa fa-envelope"></span>
+                                    Email
+                                </p>
+                                <p>
+                                    free@infoexample.com <br>
+                                    www.infoexample.com
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <div class="container">
+                <div class="row d-flex">
+                    <p class="col-lg-12 footer-text text-center">
+                        <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                        Copyright &copy;
+                        <script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="fa fa-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
+                        <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!--================ End footer Area  =================-->
+
+
+
+    <script src="~/User/vendors/jquery/jquery-3.2.1.min.js"></script>
+    <script src="~/User/vendors/bootstrap/bootstrap.bundle.min.js"></script>
+    <script src="~/User/vendors/skrollr.min.js"></script>
+    <script src="~/User/vendors/owl-carousel/owl.carousel.min.js"></script>
+    <script src="~/User/vendors/nice-select/jquery.nice-select.min.js"></script>
+    <script src="~/User/vendors/nouislider/nouislider.min.js"></script>
+    <script src="~/User/vendors/jquery.ajaxchimp.min.js"></script>
+    <script src="~/User/vendors/mail-script.js"></script>
+    <script src="~/Scripts/bootstrap-datetimepicker.min.js"></script>
+    <script src="~/User/js/main.js"></script>
+    <script>
+        function LoadCart() {
+            var listEcard = '';
+            if (localStorage.getItem('LISTECARD') !== null) {
+                listEcard = localStorage.getItem('LISTECARD');
+            }
+            var countEcard = 0;
+            if (listEcard !== '') {
+                countEcard = listEcard.split('-').length;
+            }
+            $('.nav-shop__circle').html(countEcard)
+        }
+
+        $(document).ready(function () {
+            LoadCart();
+
+            $('button').each(function (index, element) {
+                if (localStorage.getItem('LISTECARD') !== null) {
+                    listEcard = localStorage.getItem('LISTECARD');
+                    if (listEcard.split('-').includes($(element).attr('value'))) {
+                        $(element).css('background', 'orange');
+                    }
+                }
+            });
+        });
+
+        function ToOrder() {
+            if ($('.nav-shop__circle').html() !== '0') {
+                var ListEcardIDString = localStorage.getItem('LISTECARD');
+                window.location.href = "/orders?ListEcardIDString=" + ListEcardIDString;
+            } else {
+                alert('Cart must not be empty!');
+            }
+        }
+
+    </script>
+    @RenderSection("scripts", required: false)
+</body>
+</html>

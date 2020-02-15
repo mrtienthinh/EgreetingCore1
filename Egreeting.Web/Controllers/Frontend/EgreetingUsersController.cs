@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Egreeting.Web.Controllers.Frontend
 {
     //[LogAction]
-    public class EgreetingUsersController : BaseController
+    public class EgreetingUsersController : BaseFrontController
     {
         private IEgreetingUserBusiness EgreetingUserBusiness;
         public EgreetingUsersController(IEgreetingUserBusiness EgreetingUserBusiness)

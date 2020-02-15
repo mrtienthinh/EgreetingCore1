@@ -12,6 +12,7 @@ namespace Egreeting.Web.Controllers.Admin
 {
     //[LogAction]
     //[RoleAuthorize(Roles = "Admin")]
+    [Route("admin/[controller]/[action]")]
     public class FeedbacksController : BaseAdminController
     {
         private IFeedbackBusiness FeedbackBusiness;
@@ -76,12 +77,12 @@ namespace Egreeting.Web.Controllers.Admin
         {
             if (ModelState.IsValid)
             {
-                using (var context = new EgreetingContext())
+                using (var context = new DesignTimeDbContextFactory().CreateDbContext(null))
                 {
                     var user = new EgreetingUser();
                     if (HttpContext.User != null)
                     {
-                        string email = currentContext.User.Identity.Name;
+                        string email = HttpContext.User.Identity.Name;
                         user = context.Set<EgreetingUser>().Where(x => x.Email.Equals(email)).FirstOrDefault();
                     }
                     if (user != null)

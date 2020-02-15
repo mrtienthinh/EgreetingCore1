@@ -12,8 +12,18 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Egreeting.Models.AppContext
 {
-    public class EgreetingContext : IdentityDbContext
+    public class EgreetingContext : IdentityDbContext<ApplicationUser, ApplicationRole, int>
     {
+        public EgreetingContext(DbContextOptions<EgreetingContext> options)
+            : base(options)
+        {
+        }
+
+        public EgreetingContext()
+            : base()
+        {
+        }
+
         public virtual DbSet<Ecard> Ecards { get; set; }
         public virtual DbSet<Category> Categories { get; set; }
         public virtual DbSet<Order> Orders { get; set; }
@@ -56,20 +66,27 @@ namespace Egreeting.Models.AppContext
                 .IsUnique();
         }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            IConfigurationRoot configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile(@Directory.GetCurrentDirectory() + "/../Egreeting.Web/appsettings.json").Build();
-            var builder = new DbContextOptionsBuilder<EgreetingContext>();
-            var connectionString = configuration.GetConnectionString("DefaultConnection");
-            builder.UseNpgsql(connectionString);
-        }
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    if (!optionsBuilder.IsConfigured)
+        //    {
+        //        IConfigurationRoot configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile(@Directory.GetCurrentDirectory() + "/../Egreeting.Web/appsettings.json").Build();
+        //        var builder = new DbContextOptionsBuilder<EgreetingContext>();
+        //        var connectionString = configuration.GetConnectionString("DefaultConnection");
+        //        builder.UseNpgsql(connectionString);
+        //    }
+        //}
     }
 
     public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<EgreetingContext>
     {
         public EgreetingContext CreateDbContext(string[] args)
         {
-            return new EgreetingContext();
+            IConfigurationRoot configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile(@Directory.GetCurrentDirectory() + "/../Egreeting.Web/appsettings.json").Build();
+            var builder = new DbContextOptionsBuilder<EgreetingContext>();
+            var connectionString = configuration.GetConnectionString("DefaultConnection");
+            builder.UseNpgsql(connectionString);
+            return new EgreetingContext(builder.Options);
         }
     }
 }

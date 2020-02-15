@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Egreeting.Web.Controllers.Frontend
 {
     //[LogAction]
-    public class OrderDetailsController : BaseController
+    public class OrderDetailsController : BaseFrontController
     {
         private IOrderDetailBusiness OrderDetailBusiness;
         public OrderDetailsController(IOrderDetailBusiness OrderDetailBusiness)

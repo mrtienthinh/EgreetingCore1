@@ -8,36 +8,29 @@ using Egreeting.Models.Models;
 using Egreeting.Models.AppContext;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace Egreeting.Web.Controllers.Admin
 {
     //[LogAction]
     //[RoleAuthorize(Roles = "Admin")]
+    [Route("admin/[controller]/[action]")]
     public class SubcribersController : BaseAdminController
     {
-        private ApplicationUserManager _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<ApplicationUser> _roleManager;
         private ISubcriberBusiness SubcriberBusiness;
         private IEgreetingUserBusiness EgreetingUserBusiness;
         private IEgreetingRoleBusiness EgreetingRoleBusiness;
-        public SubcribersController(ISubcriberBusiness SubcriberBusiness, IEgreetingUserBusiness EgreetingUserBusiness, IEgreetingRoleBusiness EgreetingRoleBusiness)
+        public SubcribersController(RoleManager<ApplicationUser> roleManager, UserManager<ApplicationUser> userManager, ISubcriberBusiness SubcriberBusiness, IEgreetingUserBusiness EgreetingUserBusiness, IEgreetingRoleBusiness EgreetingRoleBusiness)
         {
+            _roleManager = roleManager;
+            _userManager = userManager;
             this.SubcriberBusiness = SubcriberBusiness;
             this.EgreetingUserBusiness = EgreetingUserBusiness;
             this.EgreetingRoleBusiness = EgreetingRoleBusiness;
-        }
-        public ApplicationUserManager UserManager
-        {
-            get
-            {
-                return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
-            }
-            private set
-            {
-                _userManager = value;
-            }
         }
 
         // GET: Subcribers
@@ -46,12 +39,12 @@ namespace Egreeting.Web.Controllers.Admin
             var listModel = new List<Subcriber>();
             if (!string.IsNullOrEmpty(search))
             {
-                listModel = UserManager.Users.Where(x => x.EgreetingUser.Draft != true && x.EgreetingUser.Subcriber != null).Where(x => x.Email.Contains(search)).OrderBy(x => x.Id).Skip((page - 1) * pageSize).Take(pageSize).Select(x => x.EgreetingUser.Subcriber).ToList();
+                listModel = _userManager.Users.Where(x => x.EgreetingUser.Draft != true && x.EgreetingUser.Subcriber != null).Where(x => x.Email.Contains(search)).OrderBy(x => x.Id).Skip((page - 1) * pageSize).Take(pageSize).Select(x => x.EgreetingUser.Subcriber).ToList();
             }
             else
             {
-                ViewBag.totalItem = UserManager.Users.Count(x => x.EgreetingUser.Draft != true && x.EgreetingUser.Subcriber != null);
-                listModel = UserManager.Users.Where(x => x.EgreetingUser.Draft != true && x.EgreetingUser.Subcriber != null).OrderBy(x => x.Id).Skip((page - 1) * pageSize).Take(pageSize).Select(x => x.EgreetingUser.Subcriber).ToList();
+                ViewBag.totalItem = _userManager.Users.Count(x => x.EgreetingUser.Draft != true && x.EgreetingUser.Subcriber != null);
+                listModel = _userManager.Users.Where(x => x.EgreetingUser.Draft != true && x.EgreetingUser.Subcriber != null).OrderBy(x => x.Id).Skip((page - 1) * pageSize).Take(pageSize).Select(x => x.EgreetingUser.Subcriber).ToList();
             }
             ViewBag.currentPage = page;
             ViewBag.pageSize = pageSize;
@@ -92,23 +85,16 @@ namespace Egreeting.Web.Controllers.Admin
                 var egreetingUser = new EgreetingUser
                 {
                     CreatedDate = DateTime.Now,
-                    Avatar = System.IO.File.ReadAllBytes($"{Startup.StaticHostEnvironment.WebRootPath}/Content/Admin/dist/img/avatar.png"),
+                    Avatar = System.IO.File.ReadAllBytes($"{Startup.StaticHostEnvironment.WebRootPath}/Admin/dist/img/avatar.png"),
                     Email = subcriber.Email,
 
                 };
                 var applicationUser = new ApplicationUser { Email = egreetingUser.Email, UserName = egreetingUser.Email, EgreetingUser = egreetingUser };
-                var result = await UserManager.CreateAsync(applicationUser, "delete123456Aa");
-                using (var context = new EgreetingContext())
-                {
-                    var roleStore = new RoleStore<IdentityRole>(context);
-                    var roleManager = new RoleManager<IdentityRole>(roleStore);
-                    var userStore = new UserStore<ApplicationUser>(context);
-                    var userManager = new UserManager<ApplicationUser>(userStore);
-                    userManager.AddToRole(applicationUser.Id, "Subcriber");
-                }
+                var result = await _userManager.CreateAsync(applicationUser, "delete123456Aa");
+                await _userManager.AddToRoleAsync(applicationUser, "Subcriber");
                 if (result.Succeeded)
                 {
-                    using (var context = new EgreetingContext())
+                    using (var context = new DesignTimeDbContextFactory().CreateDbContext(null))
                     {
                         var eUser = context.Set<EgreetingUser>().Where(x => x.Email.Equals(egreetingUser.Email)).FirstOrDefault();
                         eUser.EgreetingUserRoles = (ICollection<EgreetingUserRole>) context.Set<EgreetingRole>().Where(x => x.EgreetingRoleName.Equals("Subcriber")).Select(x => x.EgreetingUserRoles).ToList();

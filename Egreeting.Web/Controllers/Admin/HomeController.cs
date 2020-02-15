@@ -2,6 +2,7 @@
 
 namespace Egreeting.Web.Controllers.Admin
 {
+    [Route("admin/[controller]/[action]")]
     public class HomeController : BaseAdminController
     {
         public ActionResult Index()

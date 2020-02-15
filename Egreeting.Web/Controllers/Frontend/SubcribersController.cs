@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Egreeting.Web.Controllers.Frontend
 {
     //[LogAction]
-    public class SubcribersController : BaseController
+    public class SubcribersController : BaseFrontController
     {
         private ISubcriberBusiness SubcriberBusiness;
         public SubcribersController(ISubcriberBusiness SubcriberBusiness)

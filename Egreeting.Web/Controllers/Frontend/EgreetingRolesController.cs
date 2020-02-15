@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Egreeting.Web.Controllers.Frontend
 {
     //[LogAction]
-    public class EgreetingRolesController : BaseController
+    public class EgreetingRolesController : BaseFrontController
     {
         private IEgreetingRoleBusiness EgreetingRoleBusiness;
         public EgreetingRolesController(IEgreetingRoleBusiness EgreetingRoleBusiness)

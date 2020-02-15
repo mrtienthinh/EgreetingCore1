@@ -1,0 +1,61 @@
+﻿@model Egreeting.Models.Models.Feedback
+
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewBag.Title = "Detail - Feedback";
+}
+
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <h1>
+        Feedback management
+        <small>Edit</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="@Url.Action("Index","Home")"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li>Admin</li>
+        <li><a href="@Url.Action("Index")">Categories</a></li>
+        <li class="active">Edit</li>
+    </ol>
+</section>
+
+<!-- Main content -->
+<section class="content">
+
+    <div class="box box-primary">
+        <div class="box-header">
+            <h3 class="box-title">Edit Feedback</h3>
+        </div><!-- /.box-header -->
+        <form>
+            <div class="box-body">
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                <div class="form-group">
+                    <label for="">Feedback subject</label>
+                    <input type="text" class="form-control" id="Subject" placeholder="Subject" name="FeedbackName" value="@Model.Subject" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="">Feedback message</label>
+                    <input type="text" class="form-control" id="Message" placeholder="Feedback message" name="Message" value="@Model.Message" readonly>
+                </div>
+            </div>
+
+            <div class="box-footer">
+                <button class="btn btn-primary" type="button" onclick="BackToIndex()">Back to index</button>
+            </div>
+
+        </form>
+    </div>
+
+
+</section><!-- /.content -->
+</div><!-- /.content-wrapper -->
+<!-- Main content -->
+
+@section scripts{
+    <script>
+        function BackToIndex()
+        {
+            window.location.href = ('@Url.Action("Index")');
+        }
+    </script>
+}

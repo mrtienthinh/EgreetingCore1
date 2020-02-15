@@ -16,12 +16,12 @@ namespace Egreeting.Business.Business
     {
         IEgreetingUserRepository EgreetingUserRepository;
 
-        public EgreetingUserBusiness(ILog logger, EgreetingContext context = null)
-          : base(logger)
+        public EgreetingUserBusiness(EgreetingContext context = null)
+          : base()
         {
             if (context == null)
             {
-                context = new EgreetingContext();
+                context = new DesignTimeDbContextFactory().CreateDbContext(null);
             }
             this.context = context;
 

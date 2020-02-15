@@ -1,0 +1,170 @@
+﻿@model Egreeting.Models.Models.Ecard
+@using Egreeting.Models.Models
+
+@{
+    Layout = "~/Views/Shared/_FrontendLayout.cshtml";
+    ViewBag.Title = "Ecard Details - Egreeting";
+}
+
+<!--================Single Product Area =================-->
+<div class="product_image_area">
+    <div class="container">
+        <div class="row s_product_inner">
+            <div class="col-lg-6">
+                <div class="owl-carousel owl-theme s_Product_carousel">
+                    <div class="single-prd-item">
+                        @if (Model.EcardType == 1 || Model.EcardType == 2)
+                        {
+                            <img class="img-fluid" src="~/Uploads/EcardFiles/@Model.EcardUrl" alt="ecard">
+                        }
+                        @if (Model.EcardType == 4)
+                        {
+                            <video width="100%" controls>
+                                <source src="~/Uploads/EcardFiles/@Model.EcardUrl" type="video/mp4">
+                            </video>
+                        }
+                    </div>
+                    <!-- <div class="single-prd-item">
+                        <img class="img-fluid" src="img/category/s-p1.jpg" alt="">
+                    </div>
+                    <div class="single-prd-item">
+                        <img class="img-fluid" src="img/category/s-p1.jpg" alt="">
+                    </div> -->
+                </div>
+            </div>
+            <div class="col-lg-5 offset-lg-1">
+                <div class="s_product_text">
+                    <h3>@Model.EcardName</h3>
+                    @{
+                        var price = string.Format("${0:N2}", @Model.Price);
+                    }
+                    <h2>@price</h2>
+                    <ul class="list">
+                        <li>
+                            <span>Category :</span>
+                            @foreach (var category in @Model.CategoryEcards.Select(x => x.Category))
+                            {
+                                <a class="active" href="/Categories/@category.CategorySlug"> @category.CategoryName</a>
+                            }
+                        </li>
+                    </ul>
+                    <p>
+                        <span style="display: block">Thumbnail</span>
+                        <img src="~/Uploads/Thumbnails/@Model.ThumbnailUrl" alt="thumbnail" width="100px" />
+                    </p>
+                    <div class="product_count">
+                        <a class="button primary-btn" href="javascript:AddToCart('@Model.EcardID');">Add to Cart</a>
+                    </div>
+                    <div class="card_area d-flex align-items-center">
+                        <a class="icon_btn" href="#"><i class="lnr lnr lnr-diamond"></i></a>
+                        <a class="icon_btn" href="#"><i class="lnr lnr lnr-heart"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--================End Single Product Area =================-->
+<!-- ================ top product area start ================= -->
+<section class="related-product-area">
+    <div class="container">
+        <div class="section-intro pb-60px mt-5" style="text-align: center;" >
+            <h2>Top <span>ecard</span></h2>
+            <p>Popular ecard in the market</p>
+        </div>
+        @{
+            var rowCount = 1;
+        }
+        @foreach (var ecard in ViewBag.topEcards as List<Ecard>)
+        {
+            if (rowCount % 4 == 1)
+            {
+                @Html.Raw("<div class='row mt-30'>");
+            }
+            <div class="col-sm-6 col-xl-3 mb-4 mb-xl-0">
+                <div class="single-search-product-wrapper">
+                    <div class="single-search-product d-flex">
+                        <a href="/Ecards/@ecard.EcardSlug"><img src="~/Uploads/Thumbnails/@ecard.ThumbnailUrl" alt="ecard"></a>
+                        <div class="desc">
+                            <a href="/Ecards/@ecard.EcardSlug" class="title">@ecard.EcardName</a>
+                            @{
+                                var price1 = string.Format("${0:N2}", ecard.Price);
+                            }
+                            <div class="price">@price1</div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            if (rowCount % 4 == 0)
+            {
+                @Html.Raw("</div>");
+            }
+            rowCount++;
+        }
+
+    </div>
+</section>
+<!-- ================ top product area end ================= -->
+<!--================Product Feedback =================-->
+<section class="product_description_area">
+    <div class="container">
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="review" role="tabpanel" aria-labelledby="review-tab">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="review_box">
+                            <h4>Add a Review</h4>
+                            <p>Your Rating:</p>
+                            <ul class="list">
+                                <li><a href="#"><i class="fa fa-star"></i></a></li>
+                                <li><a href="#"><i class="fa fa-star"></i></a></li>
+                                <li><a href="#"><i class="fa fa-star"></i></a></li>
+                                <li><a href="#"><i class="fa fa-star"></i></a></li>
+                                <li><a href="#"><i class="fa fa-star"></i></a></li>
+                            </ul>
+                            <p>Outstanding</p>
+                            <form action="/Feedbacks/Create" class="form-contact form-review mt-3" method="post">
+                                @Html.AntiForgeryToken()
+                                <div class="form-group">
+                                    <input class="form-control" name="Subject" type="text" placeholder="Subject" required>
+                                </div>
+                                <div class="form-group">
+                                    <textarea class="form-control different-control w-100" name="Message" id="Message" cols="30" rows="5" placeholder="Enter Message"></textarea>
+                                </div>
+                                <input type="hidden" name="EcardID" value="@Model.EcardID" />
+                                <div class="form-group text-center text-md-right mt-3">
+                                    <button type="submit" class="button button--active button-review">Submit Now</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!--================End Product Feedback =================-->
+
+
+@section scripts{
+    <script>
+        function AddToCart(id) {
+            if (localStorage.getItem('LISTECARD') === null || localStorage.getItem('LISTECARD') === '') {
+                listEcard = [id];
+                $('.product_count a').css('background', 'orange');
+            } else {
+                listEcard = localStorage.getItem('LISTECARD');
+                if (!listEcard.split('-').includes(id)) {
+                    listEcard = listEcard + '-' + id;
+                    $('.product_count a').css('background', 'orange');
+                } else {
+                    listEcard = listEcard.split('-').filter(x => x !== id).join('-');
+                    $('.product_count a').css('background', '#8894ff');
+                }
+            }
+            localStorage.setItem('LISTECARD', listEcard);
+            LoadCart();
+        }
+    </script>
+}

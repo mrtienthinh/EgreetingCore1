@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Egreeting.Web.Controllers.Frontend
 {
-    public class TrackingController : Controller
+    public class TrackingController : BaseFrontController
     {
         private IOrderDetailBusiness OrderDetailBusiness;
         public TrackingController(IOrderDetailBusiness OrderDetailBusiness)

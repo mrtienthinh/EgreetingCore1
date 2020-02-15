@@ -1,0 +1,67 @@
+﻿@model IEnumerable<Egreeting.Models.Models.Feedback>
+
+@{
+    Layout = "~/Views/Shared/_FrontendLayout.cshtml";
+    ViewBag.Title = "Feedback - Egreeting";
+}
+
+<!-- ================ start banner area ================= -->
+<section class="blog-banner-area" id="category"
+    style="background-image: url('@Url.Content("~/User/img/background.jpg")') !important;
+    position: relative; background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;">
+    <div class="container">
+        <div class="blog-banner">
+            <div class="text-center">
+                <h1>Feedback</h1>
+                <nav aria-label="breadcrumb" class="banner-breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/Home/Index">Home</a></li>
+                        <li class="breadcrumb-item active" aria-current="page"><a href="/Categories">Feedback</a></li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- ================ end banner area ================= -->
+<!--================Product Feedback =================-->
+<section class="product_description_area">
+    <div class="container">
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="review" role="tabpanel" aria-labelledby="review-tab">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="review_box">
+                            <h4>Add a Review</h4>
+                            <p>Your Rating:</p>
+                            <ul class="list">
+                                <li><a href="#"><i class="fa fa-star"></i></a></li>
+                                <li><a href="#"><i class="fa fa-star"></i></a></li>
+                                <li><a href="#"><i class="fa fa-star"></i></a></li>
+                                <li><a href="#"><i class="fa fa-star"></i></a></li>
+                                <li><a href="#"><i class="fa fa-star"></i></a></li>
+                            </ul>
+                            <p>Outstanding</p>
+                            <form action="/Feedbacks/Create" class="form-contact form-review mt-3" method="post">
+                                @Html.AntiForgeryToken()
+                                <div class="form-group">
+                                    <input class="form-control" name="Subject" type="text" placeholder="Subject" required>
+                                </div>
+                                <div class="form-group">
+                                    <textarea class="form-control different-control w-100" name="Message" id="Message" cols="30" rows="5" placeholder="Enter Message"></textarea>
+                                </div>
+                                <input type="hidden" name="EcardID" value />
+                                <div class="form-group text-center text-md-right mt-3">
+                                    <button type="submit" class="button button--active button-review">Submit Now</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!--================End Product Feedback =================-->

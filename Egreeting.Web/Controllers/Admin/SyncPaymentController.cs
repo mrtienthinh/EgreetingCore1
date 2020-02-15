@@ -7,13 +7,14 @@ using System.Linq;
 
 namespace Egreeting.Web.Controllers.Admin
 {
-    public class SyncPaymentController : Controller
+    [Route("admin/[controller]/[action]")]
+    public class SyncPaymentController : BaseAdminController
     {
         // GET: SyncPayment
         [HttpPost]
         public ActionResult Index()
         {
-            using (var context = new EgreetingContext())
+            using (var context = new DesignTimeDbContextFactory().CreateDbContext(null))
             {
                 var currentDate = DateTime.Now;
                 var nextmonthDate = DateTime.Now.AddMonths(1);

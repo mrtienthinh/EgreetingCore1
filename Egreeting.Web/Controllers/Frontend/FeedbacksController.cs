@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Egreeting.Web.Controllers.Frontend
 {
     //[LogAction]
-    public class FeedbacksController : BaseController
+    public class FeedbacksController : BaseFrontController
     {
         private IFeedbackBusiness FeedbackBusiness;
         public FeedbacksController(IFeedbackBusiness FeedbackBusiness)
@@ -30,7 +30,7 @@ namespace Egreeting.Web.Controllers.Frontend
         {
             if (ModelState.IsValid)
             {
-                using (var context = new EgreetingContext())
+                using (var context = new DesignTimeDbContextFactory().CreateDbContext(null))
                 {
                     if (User.Identity.IsAuthenticated)
                     {

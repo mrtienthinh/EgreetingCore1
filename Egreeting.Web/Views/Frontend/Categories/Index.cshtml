@@ -1,0 +1,283 @@
+﻿@model IEnumerable<Egreeting.Models.Models.Ecard>
+@using Egreeting.Domain
+@using Egreeting.Web.Models
+@using Egreeting.Models.Models
+
+@{
+    Layout = "~/Views/Shared/_FrontendLayout.cshtml";
+    ViewBag.Title = "Categories - Egreeting";
+    int currentPage = (int)ViewBag.currentPage;
+    int pageSize = (int)ViewBag.pageSize;
+    int totalItem = (int)ViewBag.totalItem;
+    int fromItem = (currentPage - 1) * pageSize + 1;
+    int toItem = (currentPage * pageSize) >= totalItem ? totalItem : (currentPage * pageSize);
+    int totalPage = (int)Math.Ceiling((decimal)totalItem / pageSize);
+}
+
+<!--================ End Header Menu Area =================-->
+<!-- ================ start banner area ================= -->
+<section class="blog-banner-area" id="category"
+    style="background-image: url('@Url.Content("~/User/img/background.jpg")') !important;
+    position: relative; background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;">
+    <div class="container h-100">
+        <div class="blog-banner">
+            <div class="text-center">
+                <h1>Ecard category</h1>
+                <nav aria-label="breadcrumb" class="banner-breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/Home/Index">Home</a></li>
+                        <li class="breadcrumb-item" aria-current="page"><a href="/Categories">Category</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">All</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- ================ end banner area ================= -->
+<!-- ================ top product area start ================= -->
+<section class="related-product-area">
+    <div class="container">
+        <div class="pb-60px mt-5" style="text-align: center;">
+            <h2>Top <span class="">ecard</span></h2>
+            <p>Popular ecard in the market</p>
+        </div>
+        @{
+            var rowCount = 1;
+        }
+        @foreach (var ecard in ViewBag.topEcards as List<Ecard>)
+        {
+            if (rowCount % 4 == 1)
+            {
+                @Html.Raw("<div class='row mt-30'>");
+            }
+            <div class="col-sm-6 col-xl-3 mb-4 mb-xl-0">
+                <div class="single-search-product-wrapper">
+                    <div class="single-search-product d-flex">
+                        <a href="/Ecards/@ecard.EcardSlug"><img src="~/Uploads/Thumbnails/@ecard.ThumbnailUrl" alt="ecard"></a>
+                        <div class="desc">
+                            <a href="/Ecards/@ecard.EcardSlug" class="title">@ecard.EcardName</a>
+                            @{
+                                var price = string.Format("${0:N2}", ecard.Price);
+                            }
+                            <div class="price">@price</div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            if (rowCount % 4 == 0)
+            {
+                @Html.Raw("</div>");
+            }
+            rowCount++;
+        }
+
+    </div>
+</section>
+<!-- ================ top product area end ================= -->
+<!-- ================ category section start ================= -->
+<section class="section-margin--small mb-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-3 col-lg-4 col-md-5">
+                <div class="sidebar-categories">
+                    <div class="head">Browse Categories</div>
+                    <ul class="main-categories">
+                        <li class="common-filter">
+                            <form action="#">
+                                <ul>
+                                    @foreach (var category in ViewBag.categories as List<CategoryViewModel>)
+                                    {
+                                        <li class="filter-list"><a href="/Categories/@category.CategorySlug"><label for="men">@category.CategoryName<span> (@category.EcardsCount)</span></label></a></li>
+                                    }
+                                </ul>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-xl-9 col-lg-8 col-md-7">
+                <!-- Start Filter Bar -->
+                <div class="filter-bar d-flex flex-wrap align-items-center">
+                    <div class="sorting">
+                        <select name="sort" id="sortSelect" onchange="LoadData()">
+                            @if (ViewBag.sorting == "price")
+                            {
+                                <option value="price" selected>By price</option>
+                            }
+                            else
+                            {
+                                <option value="price">By price</option>
+                            }
+                            @if (ViewBag.sorting == "date")
+                            {
+                                <option value="date" selected>By date</option>
+                            }
+                            else
+                            {
+                                <option value="date">By date</option>
+                            }
+                            @if (ViewBag.sorting == "name")
+                            {
+                                <option value="name" selected>By name</option>
+                            }
+                            else
+                            {
+                                <option value="name">By name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="sorting mr-auto">
+                        <select name="size" id="sizeSelect" onchange="LoadData()">
+                            @for (int i = 6; i <= 12; i += 3)
+                            {
+                                if (i == ViewBag.pageSize)
+                                {
+                                    <option value="@i" selected>Show @i</option>
+                                }
+                                else
+                                {
+                                    <option value="@i">Show @i</option>
+                                }
+
+                            }
+                        </select>
+                    </div>
+                    <div>
+                        <div class="input-group filter-bar-search">
+                            <input type="hidden" name="page" value="@currentPage" id="currentPage" />
+                            <input type="text" placeholder="Search" id="searchId" value="@ViewBag.search">
+                            <div class="input-group-append">
+                                <button type="button" onclick="LoadData()"><i class="ti-search"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- End Filter Bar -->
+                <!-- Start Best Seller -->
+                <section class="lattest-product-area pb-40 category-list">
+                    <div class="row">
+                        @if (Model.Count() == 0)
+                        {
+                            <div class="col-md-6 col-lg-4">
+                                <h1>No ecard found!</h1>
+                            </div>
+                        }
+                        @foreach (var ecard in Model)
+                        {
+                            <div class="col-md-6 col-lg-4">
+                                <div class="card text-center card-product">
+                                    <div class="card-product__img">
+                                        <img class="card-img" src="~/Uploads/Thumbnails/@ecard.ThumbnailUrl" alt="ecard">
+                                        <ul class="card-product__imgOverlay">
+                                            <li><button onclick="LoadEcard('@ecard.EcardSlug')"><i class="ti-search"></i></button></li>
+                                            <li><button onclick="AddToCart('@ecard.EcardID', this)" value="@ecard.EcardID"><i class="ti-shopping-cart"></i></button></li>
+                                            <li><button onclick="LoadEcard('@ecard.EcardSlug')"><i class="ti-heart"></i></button></li>
+                                        </ul>
+                                    </div>
+                                    <div class="card-body">
+                                        @{
+                                            var ecardType = (EcardType)ecard.EcardType;
+                                        }
+                                        <p>@ecardType</p>
+                                        <h4 class="card-product__title"><a href="/Ecards/@ecard.EcardSlug">@ecard.EcardName</a></h4>
+                                        @{
+                                            var price = string.Format("${0:N2}", ecard.Price);
+                                        }
+                                        <p class="card-product__price">@price</p>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <div class="row">
+                        <div class="col"></div>
+                        <div class="col">
+                            <nav class="blog-pagination justify-content-center d-flex" style="padding: 0">
+                                <ul class="pagination">
+                                    <li class="page-item">
+                                        <a href="javascript:LoadData(1);" class="page-link" aria-label="Previous">
+                                            <span aria-hidden="true">
+                                                <span class="lnr lnr-chevron-left"></span>
+                                            </span>
+                                        </a>
+                                    </li>
+                                    @for (int i = 1; i <= totalPage; i++)
+                                    {
+                                        if (i == currentPage)
+                                        {
+                                            <li class="page-item active">
+                                                <a href="javascript:LoadData(@i);" class="page-link">@i</a>
+                                            </li>
+                                        }
+                                        else
+                                        {
+                                            <li class="page-item">
+                                                <a href="javascript:LoadData(@i);" class="page-link">@i</a>
+                                            </li>
+                                        }
+                                    }
+                                    <li class="page-item">
+                                        <a href="javascript:LoadData(@totalPage);" class="page-link" aria-label="Next">
+                                            <span aria-hidden="true">
+                                                <span class="lnr lnr-chevron-right"></span>
+                                            </span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                        <div class="col"></div>
+                    </div>
+                </section>
+                <!-- End Best Seller -->
+            </div>
+
+        </div>
+</section>
+<!-- ================ category section end ================= -->
+
+@section scripts{
+    <script>
+        function AddToCart(id, e) {
+            if (localStorage.getItem('LISTECARD') === null || localStorage.getItem('LISTECARD') === '') {
+                listEcard = [id];
+                $(e).css('background', 'orange');
+            } else {
+                listEcard = localStorage.getItem('LISTECARD');
+                if (!listEcard.split('-').includes(id)) {
+                    listEcard = listEcard + '-' + id;
+                    $(e).css('background', 'orange');
+                } else {
+                    listEcard = listEcard.split('-').filter(x => x !== id).join('-');
+                    $(e).css('background', '#8894ff');
+                }
+            }
+            localStorage.setItem('LISTECARD', listEcard);
+            LoadCart();
+        }
+
+        
+
+        function LoadData(e) {
+            var page = 1;
+            if (e !== '') {
+                page = parseInt(e);
+            } else {
+                page = $('#currentPage').val();
+            }
+            var search = $('#searchId').val();
+            var pageSize = $('#sizeSelect').val();
+            var sorting = $('#sortSelect').val();
+            window.location.href = ('/categories' + '?page=' + page + '&pageSize=' + pageSize + '&search=' + search + '&sorting=' + sorting);
+        }
+
+        function LoadEcard(e) {
+            window.location.href = ('/ecards/' + e);
+        }
+
+    </script>
+}

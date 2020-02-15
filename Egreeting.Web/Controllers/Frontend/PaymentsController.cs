@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Egreeting.Web.Controllers.Frontend
 {
     //[LogAction]
-    public class PaymentsController : BaseController
+    public class PaymentsController : BaseFrontController
     {
         private IPaymentBusiness PaymentBusiness;
         public PaymentsController(IPaymentBusiness PaymentBusiness)
@@ -52,7 +52,7 @@ namespace Egreeting.Web.Controllers.Frontend
             {
                 ModelState.AddModelError(string.Empty, "CVG not valid!");
             }
-            using (var context = new EgreetingContext())
+            using (var context = new DesignTimeDbContextFactory().CreateDbContext(null))
             {
                 if(!context.Set<Subcriber>().Any(x => x.Email.Equals(email)))
                 {
@@ -66,7 +66,7 @@ namespace Egreeting.Web.Controllers.Frontend
             }
             var listPayment = new List<int>();
             DateTime maxMonth = DateTime.Now;
-            using (var context = new EgreetingContext())
+            using (var context = new DesignTimeDbContextFactory().CreateDbContext(null))
             {
                 listPayment = context.Set<Payment>().Where(x => x.EgreetingUser.Email.Equals(email)
                     && x.Draft != true

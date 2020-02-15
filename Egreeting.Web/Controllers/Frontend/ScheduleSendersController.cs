@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Egreeting.Web.Controllers.Frontend
 {
     //[LogAction]
-    public class ScheduleSendersController : BaseController
+    public class ScheduleSendersController : BaseFrontController
     {
         private IScheduleSenderBusiness ScheduleSenderBusiness;
         public ScheduleSendersController(IScheduleSenderBusiness ScheduleSenderBusiness)

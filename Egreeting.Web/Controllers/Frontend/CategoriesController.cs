@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Egreeting.Web.Controllers.Frontend
 {
     //[LogAction]
-    public class CategoriesController : BaseController
+    public class CategoriesController : BaseFrontController
     {
         private ICategoryBusiness CategoryBusiness;
         private IEcardBusiness EcardBusiness;
@@ -43,7 +43,7 @@ namespace Egreeting.Web.Controllers.Frontend
             ViewBag.sorting = sorting;
             ViewBag.categorySlug = slug;
             ViewBag.categoryName = CategoryBusiness.All.Where(x => x.CategorySlug.Equals(slug)).Select(x => x.CategoryName).FirstOrDefault();
-            ViewBag.categories = CategoryBusiness.All.Where(x => x.Draft != true).Select(x => new CategoryViewModel { CategoryName = x.CategoryName, EcardsCount = x.CategoryEcards.Count, CategorySlug = x.CategorySlug }).Take(5).ToList();
+            ViewBag.categories = CategoryBusiness.All.Where(x => x.Draft != true).OrderBy(x => x.CategoryID).Select(x => new CategoryViewModel { CategoryName = x.CategoryName, EcardsCount = x.CategoryEcards.Count, CategorySlug = x.CategorySlug }).Take(5).ToList();
             ViewBag.topEcards = EcardBusiness.All.Where(x => x.Draft != true).OrderBy(x => x.Price).Take(12).ToList();
             return View(ViewNamesConstant.FrontendCategoriesDetails, listModel);
         }
@@ -68,7 +68,7 @@ namespace Egreeting.Web.Controllers.Frontend
             ViewBag.pageSize = pageSize;
             ViewBag.search = listModel.Count > 0 ? search : "";
             ViewBag.sorting = sorting;
-            ViewBag.categories = CategoryBusiness.All.Where(x => x.Draft != true).Select(x => new CategoryViewModel { CategoryName = x.CategoryName, EcardsCount = x.CategoryEcards.Count, CategorySlug = x.CategorySlug }).Take(5).ToList();
+            ViewBag.categories = CategoryBusiness.All.Where(x => x.Draft != true).OrderBy(x => x.CategoryID).Select(x => new CategoryViewModel { CategoryName = x.CategoryName, EcardsCount = x.CategoryEcards.Count, CategorySlug = x.CategorySlug }).Take(5).ToList();
             ViewBag.topEcards = EcardBusiness.All.Where(x => x.Draft != true).OrderBy(x => x.Price).Take(12).ToList();
             return View(ViewNamesConstant.FrontendCategoriesIndex, listModel);
         }

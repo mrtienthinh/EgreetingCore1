@@ -16,12 +16,12 @@ namespace Egreeting.Business.Business
     {
         IEcardRepository EcardRepository;
 
-        public EcardBusiness(ILog logger, EgreetingContext context = null)
-          : base(logger)
+        public EcardBusiness(EgreetingContext context = null)
+          : base()
         {
             if (context == null)
             {
-                context = new EgreetingContext();
+                context = new DesignTimeDbContextFactory().CreateDbContext(null);
             }
             this.context = context;
 

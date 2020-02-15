@@ -37,7 +37,7 @@ namespace Egreeting.Web.Utils
 
         public static int SendMailByOrder(int? ItemID)
         {
-            using (var context = new EgreetingContext())
+            using (var context = new DesignTimeDbContextFactory().CreateDbContext(null))
             {
                 var order = context.Set<Order>().Find(ItemID);
 
@@ -82,7 +82,7 @@ namespace Egreeting.Web.Utils
         public static int SendMailByOrderDetail(int? ItemID)
         {
             int id = 0;
-            using (var context = new EgreetingContext())
+            using (var context = new DesignTimeDbContextFactory().CreateDbContext(null))
             {
                 var orderDetail = context.OrderDetails.Find(ItemID);
                 id = orderDetail.OrderDetailID;
@@ -125,7 +125,7 @@ namespace Egreeting.Web.Utils
 
                 }
             }
-            using (var db  = new EgreetingContext())
+            using (var db  = new DesignTimeDbContextFactory().CreateDbContext(null))
             {
 
                 var abc = db.OrderDetails.Find(id);
@@ -134,7 +134,7 @@ namespace Egreeting.Web.Utils
 
         }
 
-        public async static Task<int> SendMailAll(List<int> ItemID)
+        public static int SendMailAll(List<int> ItemID)
         {
             foreach (var item in ItemID)
             {

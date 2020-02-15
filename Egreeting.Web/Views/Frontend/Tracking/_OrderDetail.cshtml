@@ -1,0 +1,41 @@
+﻿@model IEnumerable<Egreeting.Models.Models.OrderDetail>
+@{ 
+    Layout = null;
+}
+<table id="example1" class="table table-hover">
+    <thead>
+        <tr>
+            <th width="70px">ID<i class="fa fa-fw fa-sort pull-right" style="line-height: 20px; cursor: pointer"></i></th>
+            <th>Recipient's email<i class="fa fa-fw fa-sort pull-right" style="line-height: 20px; cursor: pointer"></i></th>
+            <th>Sended time<i class="fa fa-fw fa-sort pull-right" style="line-height: 20px; cursor: pointer"></i></th>
+            <th>Thumbnail<i class="fa fa-fw fa-sort pull-right" style="line-height: 20px; cursor: pointer"></i></th>
+            <th>Status<i class="fa fa-fw fa-sort pull-right" style="line-height: 20px; cursor: pointer"></i></th>
+
+
+        </tr>
+    </thead>
+    <tbody id="tbodyId">
+
+        @{int sttOrderDetails = 1;}
+        @foreach (var OrderDetail in Model)
+        {
+            <tr>
+                <td>@sttOrderDetails</td>
+                <td>@OrderDetail.Order.RecipientEmail</td>
+                <td>@Html.DisplayFor(m => OrderDetail.SendTime)</td>
+                <td><img src="~/Uploads/Thumbnails/@OrderDetail.Ecard.ThumbnailUrl" alt="Alternate Text" width="150px" /></td>
+
+                @if (OrderDetail.SendStatus)
+                {
+                    <td><span class="badge badge-primary" style="background-color: blue">Sended</span></td>
+                }
+                else
+                {
+                    <td><span class="badge badge-secondary" style="background-color: orange">Not yet</span></td>
+
+                }
+            </tr>
+            sttOrderDetails = sttOrderDetails + 1;
+        }
+    </tbody>
+</table>

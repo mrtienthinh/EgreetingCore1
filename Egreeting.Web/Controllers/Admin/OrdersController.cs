@@ -13,6 +13,7 @@ namespace Egreeting.Web.Controllers.Admin
 {
     //[LogAction]
     //[RoleAuthorize(Roles = "Admin")]
+    [Route("admin/[controller]/[action]")]
     public class OrdersController : BaseAdminController
     {
         private IOrderBusiness OrderBusiness;
@@ -76,7 +77,7 @@ namespace Egreeting.Web.Controllers.Admin
         {
             if (ModelState.IsValid)
             {
-                using (var context = new EgreetingContext())
+                using (var context = new DesignTimeDbContextFactory().CreateDbContext(null))
                 {
                     var listEcardID = ListEcardString.Split('-').Where(x => x.Length > 0).Select(x => Convert.ToInt32(x)).ToList();
                     var listOrderDetails = new List<OrderDetail>();
@@ -133,7 +134,7 @@ namespace Egreeting.Web.Controllers.Admin
             }
             if (ModelState.IsValid)
             {
-                using (var context = new EgreetingContext())
+                using (var context = new DesignTimeDbContextFactory().CreateDbContext(null))
                 {
                     var orderUpdate = context.Set<Order>().Find(Order.OrderID);
 

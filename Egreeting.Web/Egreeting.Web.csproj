@@ -5,8 +5,26 @@
     <UserSecretsId>aspnet-Egreeting.Web-61781E1F-9C78-4C8B-9F5C-196F009957EB</UserSecretsId>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="Views\Account\**" />
+    <Compile Remove="Views\Manage\**" />
+    <Content Remove="Views\Account\**" />
+    <Content Remove="Views\Manage\**" />
+    <EmbeddedResource Remove="Views\Account\**" />
+    <EmbeddedResource Remove="Views\Manage\**" />
+    <None Remove="Views\Account\**" />
+    <None Remove="Views\Manage\**" />
+  </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Controllers\Admin\AccountController.cs" />
+    <Compile Remove="Controllers\Admin\ManageController.cs" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <PackageReference Include="Bogus" Version="29.0.1" />
+    <PackageReference Include="log4net" Version="2.0.8" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="3.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.1.1" />

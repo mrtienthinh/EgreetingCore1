@@ -11,7 +11,7 @@ using Egreeting.Domain;
 namespace Egreeting.Web.Controllers.Frontend
 {
     //[LogAction]
-    public class OrdersController : BaseController
+    public class OrdersController : BaseFrontController
     {
         private IOrderBusiness OrderBusiness;
         private IEcardBusiness EcardBusiness;
@@ -44,7 +44,7 @@ namespace Egreeting.Web.Controllers.Frontend
             {
                 if (User.Identity.IsAuthenticated)
                 {
-                    using (var context = new EgreetingContext())
+                    using (var context = new DesignTimeDbContextFactory().CreateDbContext(null))
                     {
                         string email = User.Identity.Name;
                         var userSend = context.EgreetingUsers.Where(x => x.Email == email).FirstOrDefault();
@@ -97,7 +97,7 @@ namespace Egreeting.Web.Controllers.Frontend
         {
             if (ModelState.IsValid)
             {
-                using (var context = new EgreetingContext())
+                using (var context = new DesignTimeDbContextFactory().CreateDbContext(null))
                 {
                     var listEcardID = listEcardIDstring.Split('-').Where(x => x.Length > 0).Select(x => Convert.ToInt32(x)).ToList();
                     var listOrderDetails = new List<OrderDetail>();

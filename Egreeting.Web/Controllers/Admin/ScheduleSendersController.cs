@@ -13,6 +13,7 @@ namespace Egreeting.Web.Controllers.Admin
 {
     //[LogAction]
     //[RoleAuthorize(Roles = "Admin")]
+    [Route("admin/[controller]/[action]")]
     public class ScheduleSendersController : BaseAdminController
     {
         private IScheduleSenderBusiness ScheduleSenderBusiness;
@@ -80,7 +81,7 @@ namespace Egreeting.Web.Controllers.Admin
         {
             if (ModelState.IsValid)
             {
-                using (var context = new EgreetingContext())
+                using (var context = new DesignTimeDbContextFactory().CreateDbContext(null))
                 {
                     // thinh: check user exist
                     var egreetingUser = new EgreetingUser();
@@ -165,7 +166,7 @@ namespace Egreeting.Web.Controllers.Admin
         {
             if (ModelState.IsValid)
             {
-                using (var context = new EgreetingContext())
+                using (var context = new DesignTimeDbContextFactory().CreateDbContext(null))
                 {
                     var scheduleSenderUpdate = context.Set<ScheduleSender>().Find(ScheduleSender.ScheduleSenderID);
                     // thinh: check user exist

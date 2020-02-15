@@ -1,0 +1,74 @@
+﻿@{
+    Layout = "~/Views/Shared/_FrontendLayout.cshtml";
+    ViewBag.Title = "Tracking - Egreeting";
+}
+
+<!-- ================ start banner area ================= -->
+<section class="blog-banner-area" id="category"
+    style="background-image: url('@Url.Content("~/User/img/background.jpg")') !important;
+    position: relative; background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;">
+    <div class="container h-100">
+        <div class="blog-banner">
+            <div class="text-center">
+                <h1>Tracking</h1>
+                <nav aria-label="breadcrumb" class="banner-breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="#">Home</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Tracking</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- ================ end banner area ================= -->
+<!--================Login Box Area =================-->
+<section class="section-margin">
+    <div class="container">
+        <h2>Tracking</h2>
+        <div class="row">
+            <div class="col">
+                @Html.AntiForgeryToken()
+                <div class="form-group">
+                    <label for="">Order ID</label>
+                    <input type="text" class="form-control" id="orderID" placeholder="Order id" required>
+                </div>
+                <button type="button" onclick="LoadOrderDetails()" class="btn btn-primary">Submit</button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12 mt-4" id="content">
+
+            </div>
+        </div>
+    </div>
+</section>
+<!--================End Login Box Area =================-->
+
+@section scripts {
+    <script>
+        function LoadOrderDetails() {
+            var orderID = $('#orderID').val()
+            if (orderID === '') {
+                return;
+            }
+            var __RequestVerificationToken = $("input[name=__RequestVerificationToken]").val();
+            $.ajax({
+                type: "POST",
+                url: '/tracking/showorderdetail',
+                data: { orderID, __RequestVerificationToken }, //use id here
+                success: function (data) {
+                    console.log(data);
+                    $('#content').html(data);
+                },
+                error: function () {
+                    alert("Error while deleting data");
+                }
+            });
+        }
+
+    </script>
+
+}
