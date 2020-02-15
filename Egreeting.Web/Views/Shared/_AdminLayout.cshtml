@@ -1,15 +1,15 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using Egreeting.Models.Models
 @using Egreeting.Models.AppContext
+@using Microsoft.EntityFrameworkCore
 
 @{
-    var context = new DesignTimeDbContextFactory().CreateDbContext(null);
     var user = new ApplicationUser();
     if (User.Identity.IsAuthenticated)
     {
         var userNameCurrent = User.Identity.Name ?? "";
-        user = context.Set<ApplicationUser>().Where(x => x.UserName.Equals(userNameCurrent)).FirstOrDefault();
-        
+        var context = new DesignTimeDbContextFactory().CreateDbContext(null);
+        user = context.Users.Where(x => x.UserName.Equals(userNameCurrent)).Include(x => x.EgreetingUser).FirstOrDefault();
     }
 }
 <!DOCTYPE html>

@@ -13,9 +13,9 @@
         <small>Detail</small>
     </h1>
     <ol class="breadcrumb">
-        <li><a href="@Url.Action("Index","Home")"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li><a href="/home/index"><i class="fa fa-dashboard"></i> Home</a></li>
         <li>Admin</li>
-        <li><a href="@Url.Action("Index")">Orders</a></li>
+        <li><a href="/admin/orders/Index">Orders</a></li>
         <li class="active">Detail</li>
     </ol>
 </section>
@@ -81,10 +81,10 @@
     <script>
         function BackToIndex()
         {
-            window.location.href = ('@Url.Action("Index")');
+            window.location.href = ('/admin/orders/Index');
         }
         function ToOrderDetail(e) {
-            window.location.href = ('/admin/orderdetails?OrderID='+e);
+            window.location.href = ('/admin/orderdetails/index?OrderID='+e);
         }
     </script>
 }

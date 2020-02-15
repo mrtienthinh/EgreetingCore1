@@ -44,7 +44,7 @@ namespace Egreeting.Web.Controllers.Admin
             else
             {
                 ViewBag.totalItem = _userManager.Users.Count(x => x.EgreetingUser.Draft != true);
-                listModel = _userManager.Users.Where(x => x.EgreetingUser.Draft != true).OrderBy(x => x.Id).Skip((page - 1) * pageSize).Take(pageSize).ToList();
+                listModel = _userManager.Users.Where(x => x.EgreetingUser.Draft != true).Include(x => x.EgreetingUser).OrderBy(x => x.Id).Skip((page - 1) * pageSize).Take(pageSize).ToList();
             }
             ViewBag.currentPage = page;
             ViewBag.pageSize = pageSize;
@@ -53,13 +53,10 @@ namespace Egreeting.Web.Controllers.Admin
         }
 
         // GET: EgreetingUsers/Details/5
-        public ActionResult Details(string id)
+        [Route("{id:int}")]
+        public ActionResult Details(int? id)
         {
-            if (string.IsNullOrEmpty(id))
-            {
-                return View(ViewNamesConstant.FrontendHomeError);
-            }
-            EgreetingUser egreetingUser = _userManager.Users.Where(x => x.Id.Equals(id)).Select(x => x.EgreetingUser).FirstOrDefault();
+            EgreetingUser egreetingUser = _userManager.Users.Where(x => x.Id == id).Select(x => x.EgreetingUser).FirstOrDefault();
             if (egreetingUser == null)
             {
                 return View(ViewNamesConstant.FrontendHomeError);
@@ -118,13 +115,10 @@ namespace Egreeting.Web.Controllers.Admin
         }
 
         // GET: EgreetingUsers/Edit/5
-        public ActionResult Edit(string id)
+        [Route("{id:int}")]
+        public ActionResult Edit(int? id)
         {
-            if (string.IsNullOrEmpty(id))
-            {
-                return View(ViewNamesConstant.FrontendHomeError);
-            }
-            EgreetingUser egreetingUser = _userManager.Users.Where(x => x.Id.Equals(id)).Select(x => x.EgreetingUser).FirstOrDefault();
+            EgreetingUser egreetingUser = _userManager.Users.Where(x => x.Id == id).Select(x => x.EgreetingUser).FirstOrDefault();
             ViewBag.UserId = id;
             ViewBag.ListRole = EgreetingRoleBusiness.All.Where(x => x.Draft != true).ToList();
             if (egreetingUser == null)

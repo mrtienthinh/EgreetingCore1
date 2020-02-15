@@ -42,6 +42,7 @@ namespace Egreeting.Web.Controllers.Admin
         }
 
         // GET: Categorys/Details/5
+        [Route("{id:int:min(1)}")]
         public IActionResult Details(int? id)
         {
             if (id == null)
@@ -89,6 +90,7 @@ namespace Egreeting.Web.Controllers.Admin
         }
 
         // GET: Categorys/Edit/5
+        [Route("{id:int:min(1)}")]
         public IActionResult Edit(int? id)
         {
             if (id == null)

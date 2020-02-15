@@ -13,9 +13,9 @@
         <small>Detail</small>
     </h1>
     <ol class="breadcrumb">
-        <li><a href="@Url.Action("Index","Home")"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li><a href="/home/index"><i class="fa fa-dashboard"></i> Home</a></li>
         <li>Admin</li>
-        <li><a href="@Url.Action("Index")">Ecards</a></li>
+        <li><a href="/admin/ecards/index">Ecards</a></li>
         <li class="active">Detail</li>
     </ol>
 </section>
@@ -97,7 +97,7 @@
     <script>
         function BackToIndex()
         {
-            window.location.href = ('@Url.Action("Index")');
+            window.location.href = ('/admin/ecards/index');
         }
     </script>
 }

@@ -48,6 +48,7 @@ namespace Egreeting.Web.Controllers.Admin
         }
 
         // GET: ScheduleSenders/Details/5
+        [Route("{id:int:min(1)}")]
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -141,6 +142,7 @@ namespace Egreeting.Web.Controllers.Admin
         }
 
         // GET: ScheduleSenders/Edit/5
+        [Route("{id:int:min(1)}")]
         public ActionResult Edit(int? id)
         {
             if (id == null)

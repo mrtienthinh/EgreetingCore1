@@ -227,7 +227,7 @@
                 var __RequestVerificationToken = $("input[name=__RequestVerificationToken]").val();
                 $.ajax({
                     type: "POST",
-                    url: '@Url.Action("Delete")',
+                    url: '/admin/orderdetails/delete',
                     data: {ItemID, __RequestVerificationToken }, //use id here
                     success: function () {
                         LoadData();
@@ -241,11 +241,11 @@
         }
 
         function ShowItem(id) {
-            window.location.href = ('@Url.Action("Details")'+'/' + id);
+            window.location.href = ('/admin/orderdetails/details'+'/' + id);
         }
 
         function AddItem(){
-            window.location.href = ('@Url.Action("Create")');
+            window.location.href = ('/admin/orderdetails/Create');
         }
 
         function BackToOrder() {
@@ -258,7 +258,7 @@
             var pageSize = $('#pageSizeId').val();
             var page = $('#page').val();
             var orderID = $('#orderID');
-            window.location.href = ('@Url.Action("Index")'+ '?OrderID='+ orderID +'?page=' + page + '?page=' + page + '&pageSize=' + pageSize + '&search=' + search);
+            window.location.href = ('/admin/orderdetails/Index'+ '?OrderID='+ orderID +'?page=' + page + '?page=' + page + '&pageSize=' + pageSize + '&search=' + search);
         }
 
 
@@ -268,7 +268,7 @@
             var search = $('#searchId').val();
             var pageSize = $('#pageSizeId').val();
             var orderID = $('#orderID');
-            window.location.href = ('@Url.Action("Index")'+ '?OrderID='+ orderID +'?page=' + e + '&pageSize=' + pageSize + '&search=' + search);
+            window.location.href = ('/admin/orderdetails/Index'+ '?OrderID='+ orderID +'?page=' + e + '&pageSize=' + pageSize + '&search=' + search);
         }
 
         function SendNow(ItemID) {

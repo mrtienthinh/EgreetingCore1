@@ -20,11 +20,11 @@ namespace Egreeting.Web.Controllers.Admin
     public class SubcribersController : BaseAdminController
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly RoleManager<ApplicationUser> _roleManager;
+        private readonly RoleManager<ApplicationRole> _roleManager;
         private ISubcriberBusiness SubcriberBusiness;
         private IEgreetingUserBusiness EgreetingUserBusiness;
         private IEgreetingRoleBusiness EgreetingRoleBusiness;
-        public SubcribersController(RoleManager<ApplicationUser> roleManager, UserManager<ApplicationUser> userManager, ISubcriberBusiness SubcriberBusiness, IEgreetingUserBusiness EgreetingUserBusiness, IEgreetingRoleBusiness EgreetingRoleBusiness)
+        public SubcribersController(RoleManager<ApplicationRole> roleManager, UserManager<ApplicationUser> userManager, ISubcriberBusiness SubcriberBusiness, IEgreetingUserBusiness EgreetingUserBusiness, IEgreetingRoleBusiness EgreetingRoleBusiness)
         {
             _roleManager = roleManager;
             _userManager = userManager;
@@ -39,12 +39,12 @@ namespace Egreeting.Web.Controllers.Admin
             var listModel = new List<Subcriber>();
             if (!string.IsNullOrEmpty(search))
             {
-                listModel = _userManager.Users.Where(x => x.EgreetingUser.Draft != true && x.EgreetingUser.Subcriber != null).Where(x => x.Email.Contains(search)).OrderBy(x => x.Id).Skip((page - 1) * pageSize).Take(pageSize).Select(x => x.EgreetingUser.Subcriber).ToList();
+                listModel = _userManager.Users.Where(x => x.EgreetingUser.Draft != true && x.EgreetingUser.Subcriber != null).Where(x => x.Email.Contains(search)).OrderBy(x => x.Id).Skip((page - 1) * pageSize).Take(pageSize).Include(x => x.EgreetingUser.Subcriber.EgreetingUser).Select(x => x.EgreetingUser.Subcriber).ToList();
             }
             else
             {
                 ViewBag.totalItem = _userManager.Users.Count(x => x.EgreetingUser.Draft != true && x.EgreetingUser.Subcriber != null);
-                listModel = _userManager.Users.Where(x => x.EgreetingUser.Draft != true && x.EgreetingUser.Subcriber != null).OrderBy(x => x.Id).Skip((page - 1) * pageSize).Take(pageSize).Select(x => x.EgreetingUser.Subcriber).ToList();
+                listModel = _userManager.Users.Where(x => x.EgreetingUser.Draft != true && x.EgreetingUser.Subcriber != null).OrderBy(x => x.Id).Skip((page - 1) * pageSize).Take(pageSize).Include(x => x.EgreetingUser.Subcriber.EgreetingUser).Select(x => x.EgreetingUser.Subcriber).ToList();
             }
             ViewBag.currentPage = page;
             ViewBag.pageSize = pageSize;
@@ -53,6 +53,7 @@ namespace Egreeting.Web.Controllers.Admin
         }
 
         // GET: Subcribers/Details/5
+        [Route("{id:int:min(1)}")]
         public ActionResult Details(int? id)
         {
             if (id == null)

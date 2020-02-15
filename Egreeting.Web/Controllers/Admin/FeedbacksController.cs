@@ -47,6 +47,7 @@ namespace Egreeting.Web.Controllers.Admin
         }
 
         // GET: Feedbacks/Details/5
+        [Route("{id:int:min(1)}")]
         public ActionResult Details(int? id)
         {
             if (id == null)

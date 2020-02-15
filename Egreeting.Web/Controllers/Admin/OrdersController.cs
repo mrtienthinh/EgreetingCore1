@@ -46,6 +46,7 @@ namespace Egreeting.Web.Controllers.Admin
         }
 
         // GET: Orders/Details/5
+        [Route("{id:int:min(1)}")]
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -107,6 +108,7 @@ namespace Egreeting.Web.Controllers.Admin
         }
 
         // GET: Orders/Edit/5
+        [Route("{id:int:min(1)}")]
         public ActionResult Edit(int? id)
         {
             if (id == null)

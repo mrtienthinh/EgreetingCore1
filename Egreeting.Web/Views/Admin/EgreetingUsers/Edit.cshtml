@@ -12,9 +12,9 @@
         <small>Create</small>
     </h1>
     <ol class="breadcrumb">
-        <li><a href="@Url.Action("Index","Home")"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li><a href="/home/index"><i class="fa fa-dashboard"></i> Home</a></li>
         <li>Admin</li>
-        <li><a href="@Url.Action("Index")">User</a></li>
+        <li><a href="/admin/egreetingusers/index">User</a></li>
         <li class="active">Edit</li>
     </ol>
 </section>
@@ -26,7 +26,7 @@
         <div class="box-header">
             <h3 class="box-title">Edit user</h3>
         </div><!-- /.box-header -->
-        <form action="@Url.Action("Edit")" method="POST" role="form" enctype="multipart/form-data">
+        <form action="/admin/egreetingusers/edit" method="POST" role="form" enctype="multipart/form-data">
             <div class="box-body">
                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                 @Html.AntiForgeryToken()
@@ -198,7 +198,7 @@
 
         function BackToIndex()
         {
-            window.location.href = ('@Url.Action("Index")');
+            window.location.href = ('/admin/egreetingusers/index');
         }
     </script>
 }

@@ -219,7 +219,7 @@
                 var __RequestVerificationToken = $("input[name=__RequestVerificationToken]").val();
                 $.ajax({
                     type: "POST",
-                    url: '@Url.Action("Delete")',
+                    url: '/admin/payments/delete',
                     data: {ItemID, __RequestVerificationToken }, //use id here
                     success: function () {
                         LoadData();
@@ -233,15 +233,15 @@
         }
 
         function ShowItem(id) {
-            window.location.href = ('@Url.Action("Details")'+'/' + id);
+            window.location.href = ('/admin/payments/Details'+'/' + id);
         }
 
         function AddItem(){
-            window.location.href = ('@Url.Action("Create")');
+            window.location.href = ('/admin/payments/Create');
         }
 
         function EditItem(id){
-            window.location.href = ('@Url.Action("Edit")' + '/' + id);
+            window.location.href = ('/admin/payments/Edit' + '/' + id);
         }
 
         function LoadData() {
@@ -250,7 +250,7 @@
             var pageSize = $('#pageSizeId').val();
             var page = $('#page').val();
             console.log(search + '_' + pageSize + '_' + page);
-            window.location.href = ('@Url.Action("Index")'+'?page=' + page + '?page=' + page + '&pageSize=' + pageSize + '&search=' + search);
+            window.location.href = ('/admin/payments/Index'+'?page=' + page + '?page=' + page + '&pageSize=' + pageSize + '&search=' + search);
         }
 
 
@@ -260,7 +260,7 @@
             var search = $('#searchId').val();
             var pageSize = $('#pageSizeId').val();
             console.log(search + '_' + pageSize + '_' + page);
-            window.location.href = ('@Url.Action("Index")'+'?page=' + e + '&pageSize=' + pageSize + '&search=' + search);
+            window.location.href = ('/admin/payments/Index'+'?page=' + e + '&pageSize=' + pageSize + '&search=' + search);
         }
 
         function SyncPayment() {

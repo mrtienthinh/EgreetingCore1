@@ -6,19 +6,19 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Views\Account\**" />
     <Compile Remove="Views\Manage\**" />
-    <Content Remove="Views\Account\**" />
     <Content Remove="Views\Manage\**" />
-    <EmbeddedResource Remove="Views\Account\**" />
     <EmbeddedResource Remove="Views\Manage\**" />
-    <None Remove="Views\Account\**" />
     <None Remove="Views\Manage\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="Controllers\Admin\AccountController.cs" />
     <Compile Remove="Controllers\Admin\ManageController.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Views\Account\Login.cshtml" />
+    <None Include="Views\Account\Register.cshtml" />
   </ItemGroup>
 
 

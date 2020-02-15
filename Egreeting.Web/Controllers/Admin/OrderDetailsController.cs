@@ -6,6 +6,7 @@ using Egreeting.Domain;
 using Egreeting.Business.IBusiness;
 using Egreeting.Models.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Egreeting.Web.Controllers.Admin
 {
@@ -30,12 +31,12 @@ namespace Egreeting.Web.Controllers.Admin
             }
             else if(string.IsNullOrEmpty(search))
             {
-                listModel = OrderDetailBusiness.All.Where(x => x.Order.OrderID == OrderID && x.Draft != true).OrderBy(x => x.CreatedDate).Skip((page - 1) * pageSize).Take(pageSize).ToList();
+                listModel = OrderDetailBusiness.All.Where(x => x.Order.OrderID == OrderID && x.Draft != true).Include(x => x.Order).Include(x => x.Ecard).OrderBy(x => x.CreatedDate).Skip((page - 1) * pageSize).Take(pageSize).ToList();
                 ViewBag.totalItem = OrderDetailBusiness.All.Count(x => x.Order.OrderID == OrderID && x.Draft != true);
             }
             else
             {
-                listModel = OrderDetailBusiness.All.Where(x => x.OrderDetailID.ToString().Contains(search) && x.Order.OrderID == OrderID && x.Draft != true).OrderBy(x => x.CreatedDate).Skip((page - 1) * pageSize).Take(pageSize).ToList();
+                listModel = OrderDetailBusiness.All.Where(x => x.OrderDetailID.ToString().Contains(search) && x.Order.OrderID == OrderID && x.Draft != true).Include(x => x.Order).Include(x => x.Ecard).OrderBy(x => x.CreatedDate).Skip((page - 1) * pageSize).Take(pageSize).ToList();
                 ViewBag.totalItem = OrderDetailBusiness.All.Count(x => x.Order.OrderID == OrderID && x.Draft != true);
             }
             ViewBag.orderID = OrderID;
@@ -46,13 +47,14 @@ namespace Egreeting.Web.Controllers.Admin
         }
 
         // GET: OrderDetails/Details/5
+        [Route("{id:int:min(1)}")]
         public ActionResult Details(int? id)
         {
             if (id == null)
             {
                 return View(ViewNamesConstant.FrontendHomeError);
             }
-            OrderDetail OrderDetail = OrderDetailBusiness.Find(id);
+            OrderDetail OrderDetail = OrderDetailBusiness.All.Where(x => x.OrderDetailID == id).Include(x => x.Order).Include(x => x.Ecard).FirstOrDefault();
             if (OrderDetail == null)
             {
                 return View(ViewNamesConstant.FrontendHomeError);

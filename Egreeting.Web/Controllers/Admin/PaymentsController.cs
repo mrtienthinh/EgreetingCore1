@@ -30,13 +30,13 @@ namespace Egreeting.Web.Controllers.Admin
             var listModel = new List<Payment>();
             if (!string.IsNullOrEmpty(search))
             {
-                listModel = PaymentBusiness.All.Where(x => x.EgreetingUser.Email.Contains(search) && x.Draft != true).OrderByDescending(x => x.Year).ThenByDescending(x => x.Month).Skip((page - 1) * pageSize).Take(pageSize).ToList();
+                listModel = PaymentBusiness.All.Where(x => x.EgreetingUser.Email.Contains(search) && x.Draft != true).Include(x => x.EgreetingUser).OrderByDescending(x => x.Year).ThenByDescending(x => x.Month).Skip((page - 1) * pageSize).Take(pageSize).ToList();
                 ViewBag.totalItem = PaymentBusiness.All.Count(x => x.EgreetingUser.Email.Contains(search) && x.Draft != true);
             }
             else
             {
                 ViewBag.totalItem = PaymentBusiness.All.Count(x => x.Draft != true);
-                listModel = PaymentBusiness.All.Where(x => x.Draft != true).OrderByDescending(x => x.Year).ThenByDescending(x => x.Month).Skip((page - 1) * pageSize).Take(pageSize).ToList();
+                listModel = PaymentBusiness.All.Where(x => x.Draft != true).Include(x => x.EgreetingUser).OrderByDescending(x => x.Year).ThenByDescending(x => x.Month).Skip((page - 1) * pageSize).Take(pageSize).ToList();
             }
             ViewBag.currentPage = page;
             ViewBag.pageSize = pageSize;
@@ -45,13 +45,14 @@ namespace Egreeting.Web.Controllers.Admin
         }
 
         // GET: Payments/Details/5
+        [Route("{id:int:min(1)}")]
         public ActionResult Details(int? id)
         {
             if (id == null)
             {
                 return View(ViewNamesConstant.FrontendHomeError);
             }
-            Payment Payment = PaymentBusiness.Find(id);
+            Payment Payment = PaymentBusiness.All.Where(x => x.PaymentID == id).Include(x => x.EgreetingUser).FirstOrDefault();
             if (Payment == null)
             {
                 return View(ViewNamesConstant.FrontendHomeError);
@@ -98,13 +99,14 @@ namespace Egreeting.Web.Controllers.Admin
         }
 
         // GET: Payments/Edit/5
+        [Route("{id:int:min(1)}")]
         public ActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return View(ViewNamesConstant.FrontendHomeError);
             }
-            Payment Payment = PaymentBusiness.Find(id);
+            Payment Payment = PaymentBusiness.All.Where(x => x.PaymentID == id).Include(x => x.EgreetingUser).FirstOrDefault();
             if (Payment == null)
             {
                 return View(ViewNamesConstant.FrontendHomeError);

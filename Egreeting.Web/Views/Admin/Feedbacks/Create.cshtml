@@ -14,9 +14,9 @@
         <small>Create</small>
     </h1>
     <ol class="breadcrumb">
-        <li><a href="@Url.Action("Index","Home")"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li><a href="/home/index"><i class="fa fa-dashboard"></i> Home</a></li>
         <li>Admin</li>
-        <li><a href="@Url.Action("Index")">Feedbacks</a></li>
+        <li><a href="/admin/feedbacks/index">Feedbacks</a></li>
         <li class="active">Create</li>
     </ol>
 </section>
@@ -28,7 +28,7 @@
         <div class="box-header">
             <h3 class="box-title">Create new Feedback</h3>
         </div><!-- /.box-header -->
-        <form action="@Url.Action("Create")" method="POST" role="form">
+        <form action="/admin/feedbacks/create" method="POST" role="form">
             <div class="box-body">
                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                 @Html.AntiForgeryToken()
@@ -64,7 +64,7 @@
     <script>
         function BackToIndex()
         {
-            window.location.href = ('@Url.Action("Index")');
+            window.location.href = ('/admin/feedbacks/index');
         }
     </script>
 }

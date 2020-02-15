@@ -224,7 +224,7 @@
                     var __RequestVerificationToken = $("input[name=__RequestVerificationToken]").val();
                     $.ajax({
                         type: "POST",
-                        url: '@Url.Action("Delete")',
+                        url: '/admin/ecards/delete',
                         data: {ItemID, __RequestVerificationToken }, //use id here
                         success: function () {
                             LoadData();
@@ -238,15 +238,15 @@
             }
 
             function ShowItem(id) {
-                window.location.href = ('@Url.Action("Details")'+'/' + id);
+                window.location.href = ('/admin/ecards/Details'+'/' + id);
             }
 
             function AddItem(){
-                window.location.href = ('@Url.Action("Create")');
+                window.location.href = ('/admin/ecards/Create');
             }
 
             function EditItem(id){
-                window.location.href = ('@Url.Action("Edit")' + '/' + id);
+                window.location.href = ('/admin/ecards/Edit' + '/' + id);
             }
 
             function LoadData() {
@@ -255,7 +255,7 @@
                 var pageSize = $('#pageSizeId').val();
                 var page = $('#page').val();
                 console.log(search + '_' + pageSize + '_' + page);
-                window.location.href = ('@Url.Action("Index")'+'?page=' + page + '?page=' + page + '&pageSize=' + pageSize + '&search=' + search);
+                window.location.href = ('/admin/ecards/Index'+'?page=' + page + '?page=' + page + '&pageSize=' + pageSize + '&search=' + search);
             }
 
 
