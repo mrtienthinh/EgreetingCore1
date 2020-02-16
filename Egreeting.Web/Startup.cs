@@ -38,7 +38,9 @@ namespace Egreeting.Web
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<EgreetingContext>(options =>
-                options.UseNpgsql(
+                options
+                .UseLazyLoadingProxies()
+                .UseNpgsql(
                     Configuration.GetConnectionString("DefaultConnection")));
 
             //services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)

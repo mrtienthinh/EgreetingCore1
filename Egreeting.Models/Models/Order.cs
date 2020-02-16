@@ -48,6 +48,6 @@ namespace Egreeting.Models.Models
 
         public virtual EgreetingUser User { get; set; }
 
-        public virtual IEnumerable<OrderDetail> OrderDetails { get; set; }
+        public virtual ICollection<OrderDetail> OrderDetails { get; set; }
     }
 }

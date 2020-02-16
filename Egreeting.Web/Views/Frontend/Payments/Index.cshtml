@@ -144,7 +144,7 @@
                 url: '/orders/create',
                 data: {order,listEcardIDstring}, //use id here
                 success: function (data) {
-                    if (data.Code === 'success') {
+                    if (data.code === 'success') {
                         alert("Payment successful! \n Tracking by order id: "+ data.orderID );
                         localStorage.setItem("LISTECARD", '');
                         localStorage.setItem("ORDER", '');

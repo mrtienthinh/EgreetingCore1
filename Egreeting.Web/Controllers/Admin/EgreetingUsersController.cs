@@ -134,7 +134,7 @@ namespace Egreeting.Web.Controllers.Admin
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(EgreetingUser egreetingUser, string UserId, string ListRole)
+        public async Task<ActionResult> Edit(EgreetingUser egreetingUser, int UserId, string ListRole)
         {
             var file = Request.Form.Files["Avatar"];
             byte[] image = new byte[file.Length];
@@ -142,7 +142,7 @@ namespace Egreeting.Web.Controllers.Admin
 
             if (ModelState.IsValid)
             {
-                var user = _userManager.Users.Where(x => x.Id.Equals(UserId)).FirstOrDefault();
+                var user = _userManager.Users.Where(x => x.Id == UserId).Include(x => x.EgreetingUser).FirstOrDefault();
                 user.EgreetingUser.EgreetingUserSlug = egreetingUser.EgreetingUserSlug;
                 user.EgreetingUser.FirstName = egreetingUser.FirstName;
                 user.EgreetingUser.LastName = egreetingUser.LastName;
@@ -181,13 +181,9 @@ namespace Egreeting.Web.Controllers.Admin
 
         // POST: EgreetingUsers/Delete/5
         [HttpPost]
-        public async Task<ActionResult> Delete(string ItemID)
+        public async Task<ActionResult> Delete(int? ItemID)
         {
-            if (string.IsNullOrEmpty(ItemID))
-            {
-                return View(ViewNamesConstant.FrontendHomeError);
-            }
-            var user = _userManager.Users.Where(x => x.Id.Equals(ItemID)).FirstOrDefault();
+            var user = _userManager.Users.Where(x => x.Id == ItemID).FirstOrDefault();
             
             if (user == null)
             {

@@ -206,18 +206,18 @@
                 url: '/orders/checkout',
                 data: {order,listEcardIDstring,__RequestVerificationToken}, //use id here
                 success: function (data) {
-                    if (data.Code === 'success') {
+                    if (data.code === 'success') {
                         alert("Payment successful! \n Tracking by order id: " + data.orderID);
                         localStorage.setItem("LISTECARD", '');
                         localStorage.setItem("ORDER", '');
                         window.location.href = '/';
-                    } else if (data.Code === 'fail') {
+                    } else if (data.code === 'fail') {
                         alert("Payment transaction not valid!");
-                    } else if (data.Code === 'subcriber') {
+                    } else if (data.code === 'subcriber') {
                         alert("You need to payment for subcriber!");
                         localStorage.setItem("ORDER", order);
                         window.location.href = "/payments/subcriber";
-                    } else if (data.Code === 'forsending') {
+                    } else if (data.code === 'forsending') {
                         localStorage.setItem("ORDER", JSON.stringify(order));
                         window.location.href = "/payments";
                     }

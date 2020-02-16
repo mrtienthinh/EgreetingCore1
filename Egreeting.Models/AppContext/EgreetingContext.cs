@@ -64,6 +64,8 @@ namespace Egreeting.Models.AppContext
             builder.Entity<EgreetingRole>()
                 .HasIndex(u => u.EgreetingRoleName)
                 .IsUnique();
+
+                
         }
 
         //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -85,7 +87,8 @@ namespace Egreeting.Models.AppContext
             IConfigurationRoot configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile(@Directory.GetCurrentDirectory() + "/../Egreeting.Web/appsettings.json").Build();
             var builder = new DbContextOptionsBuilder<EgreetingContext>();
             var connectionString = configuration.GetConnectionString("DefaultConnection");
-            builder.UseNpgsql(connectionString);
+            builder
+                .UseNpgsql(connectionString);
             return new EgreetingContext(builder.Options);
         }
     }

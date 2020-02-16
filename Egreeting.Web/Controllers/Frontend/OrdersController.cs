@@ -95,10 +95,13 @@ namespace Egreeting.Web.Controllers.Frontend
         [HttpPost]
         public ActionResult Create(Order order, string listEcardIDstring)
         {
-            if (ModelState.IsValid)
+            try
             {
+                // create list order details
                 using (var context = new DesignTimeDbContextFactory().CreateDbContext(null))
                 {
+
+
                     var listEcardID = listEcardIDstring.Split('-').Where(x => x.Length > 0).Select(x => Convert.ToInt32(x)).ToList();
                     var listOrderDetails = new List<OrderDetail>();
                     foreach (var ecardID in listEcardID)
@@ -113,17 +116,20 @@ namespace Egreeting.Web.Controllers.Frontend
                         listOrderDetails.Add(orderDetails);
                     }
 
-                    order.OrderDetails = listOrderDetails;
-                    order.SendStatus = false;
                     order.TotalPrice = listOrderDetails.Select(x => x.Ecard.Price).Sum();
                     order.CreatedDate = DateTime.Now;
+                    order.OrderDetails = listOrderDetails;
+                    order.OrderID = context.Orders.OrderByDescending(x => x.OrderID).FirstOrDefault().OrderID + 1;
                     context.Set<Order>().Add(order);
                     context.SaveChanges();
-                    return Json( new { Code = "success", orderID = order.OrderID});
 
+                    return Json( new { Code = "success", orderID = order.OrderID});
                 }
             }
-            return Json("fail");
+            catch (Exception ex)
+            {
+                return Json("fail");
+            }
         }
 
         public ActionResult RemoveCart()

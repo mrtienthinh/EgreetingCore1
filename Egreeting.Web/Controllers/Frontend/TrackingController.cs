@@ -1,6 +1,7 @@
 ﻿using Egreeting.Business.IBusiness;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace Egreeting.Web.Controllers.Frontend
 {
@@ -21,7 +22,7 @@ namespace Egreeting.Web.Controllers.Frontend
         [ValidateAntiForgeryToken]
         public ActionResult ShowOrderDetail(int orderID)
         {
-            var listOrderDetails = OrderDetailBusiness.All.Where(x => x.Order.OrderID == orderID).ToList();
+            var listOrderDetails = OrderDetailBusiness.All.Include(x => x.Order).Where(x => x.Order.OrderID == orderID).ToList();
             return PartialView("~/Views/Frontend/Tracking/_OrderDetail.cshtml", listOrderDetails);
         }
 

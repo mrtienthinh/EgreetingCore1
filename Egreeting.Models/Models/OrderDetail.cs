@@ -23,6 +23,8 @@ namespace Egreeting.Models.Models
 
         public virtual Ecard Ecard { get; set; }
 
+        public int? OrderID { get; set; }
+
         public virtual Order Order { get; set; }
 
 
